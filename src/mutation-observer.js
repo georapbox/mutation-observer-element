@@ -32,7 +32,6 @@ class MutationObserverElement extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === 'disabled' && oldValue !== newValue && this._connected) {
-      console.log('attr changed -----', name);
       this.disabled ? this._stopObserver() : this._startObserver();
     }
 
@@ -45,14 +44,12 @@ class MutationObserverElement extends HTMLElement {
     ) && oldValue !== newValue && this._connected;
 
     if (shouldRestartObserver) {
-      console.log('attr changed -----', name);
       this._stopObserver();
       this._startObserver();
     }
   }
 
   connectedCallback() {
-    console.log('connectedCallback');
     this._connected = true;
 
     if ('MutationObserver' in window) {
@@ -65,7 +62,6 @@ class MutationObserverElement extends HTMLElement {
   }
 
   disconnectedCallback() {
-    console.log('disconnectedCallback');
     this._connected = false;
     this._stopObserver();
   }
@@ -143,8 +139,6 @@ class MutationObserverElement extends HTMLElement {
       return;
     }
 
-    console.log('!!! _startObserver');
-
     const hasObservedAttributes = typeof this.attr === 'string' && this.attr.length > 0;
 
     try {
@@ -164,12 +158,11 @@ class MutationObserverElement extends HTMLElement {
   }
 
   _stopObserver() {
-    console.log('±±± _stopObserver');
     this._mutationObserver && this._mutationObserver.disconnect();
   }
 
   _handleMutation(mutationList) {
-    this.dispatchEvent(new CustomEvent('mutation-observer:change', {
+    this.dispatchEvent(new CustomEvent('mutation-observer:mutate', {
       bubbles: true,
       detail: { mutationList }
     }));

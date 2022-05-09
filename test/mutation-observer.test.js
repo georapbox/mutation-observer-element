@@ -52,7 +52,7 @@ describe('<mutation-observer>', () => {
 
     el.querySelector('button').className = 'btn-danger';
 
-    const { detail } = await oneEvent(el, 'mutation-observer:change');
+    const { detail } = await oneEvent(el, 'mutation-observer:mutate');
 
     expect(detail.mutationList[0]).to.be.instanceOf(MutationRecord);
   });
@@ -66,7 +66,7 @@ describe('<mutation-observer>', () => {
 
     const handler = sinon.spy();
 
-    el.addEventListener('mutation-observer:change', handler);
+    el.addEventListener('mutation-observer:mutate', handler);
 
     el.querySelector('button').className = 'btn-danger';
 
