@@ -1,5 +1,5 @@
-// import 'https://unpkg.com/@georapbox/mutation-observer-element/dist/mutation-observer-defined.min.js';
-import '../src/mutation-observer-defined.js';
+import 'https://unpkg.com/@georapbox/mutation-observer-element/dist/mutation-observer-defined.min.js';
+// import '../src/mutation-observer-defined.js';
 
 // Example 1
 (function () {
