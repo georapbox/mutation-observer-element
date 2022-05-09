@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="//unpkg.com/@highlightjs/cdn-assets@11.4.0/styles/stackoverflow-dark.min.css">
+  <link rel="stylesheet" href="//unpkg.com/@highlightjs/cdn-assets@11.4.0/styles/github-dark.min.css">
   <link rel="stylesheet" href="main.css">
 </head>
 <body>
@@ -52,8 +52,8 @@
     evt.target.className = `btn btn-${classNames[count % classNames.length]}`;
   });
 
-  mutationObserverEl.addEventListener('mutation-observer:change', evt => {
-    console.log('mutation-observer:change ->', evt.detail);
+  mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
+    console.log('mutation-observer:mutate ->', evt.detail);
   });
 &lt;/script&gt;
 </code></pre>
@@ -101,8 +101,8 @@
     }
   });
 
-  mutationObserverEl.addEventListener('mutation-observer:change', evt => {
-    console.log('mutation-observer:change ->', evt.detail);
+  mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
+    console.log('mutation-observer:mutate ->', evt.detail);
   });
 &lt;/script&gt;
   </code></pre>
@@ -127,8 +127,8 @@
 &lt;script&gt;
   const mutationObserverEl = document.querySlector('mutation-observer');
 
-  mutationObserverEl.addEventListener('mutation-observer:change', evt => {
-    console.log('mutation-observer:change ->', evt.detail);
+  mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
+    console.log('mutation-observer:mutate ->', evt.detail);
   });
 &lt;/script&gt;
 </code></pre>

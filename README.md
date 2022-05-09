@@ -39,7 +39,15 @@ import './node_modules/@georapbox/mutation-observer-element/dist/mutation-observ
 ### Markup
 
 ```html
-// TODO
+<mutation-observer 
+  attr="*"
+  attr-old-value
+  char-data
+  char-data-old-value
+  child-list
+>
+  <button class="btn-primary">Click to mutate me</button>
+</mutation-observer>
 ```
 
 ## API
@@ -47,10 +55,16 @@ import './node_modules/@georapbox/mutation-observer-element/dist/mutation-observ
 ### Properties
 | Name | Reflects | Type | Default | Description |
 | ---- | -------- | ---- | ------- | ----------- |
-| `disabled` | ✓ | Boolean | `false` | Defines if the mutation observer is disabled or not. |
-// TODO
+| `attr` | ✓ | String | `null` | A string of attribute names to be monitored. To monitor specific attributes' changes, separate them by a space, eg `title class href`. To monitor all attributes' changes, use `*`. |
+| `attrOldValue`<br><small>`attr-old-value`</small> | ✓ | Boolean | `false` | Set to `true` to record the previous value of any attribute that changes when monitoring the node or nodes for attribute changes. |
+| `childList`<br><small>`child-list`</small> | ✓ | Boolean | `false` |  Set to `true` to monitor the target node for the addition of new child nodes or removal of existing child nodes. |
+| `charData`<br><small>`char-data`</small> | ✓ | Boolean | `false` | Set to `true` to monitor the specified target node for changes to the character data contained within the node or nodes. |
+| `charDataOldValue`<br><small>`char-data-old-value`</small> | ✓ | Boolean | `false` | Set to `true` to record the previous value of a node's text whenever the text changes on nodes being monitored. |
+| `disabled` | ✓ | Boolean | `false` | Set to `true` to stop monitoring for mutations. |
 
 All of the above properties reflect their values as HTML attributes to keep the element's DOM representation in sync with its JavaScript state.
+
+> NOTE: From the properties above, at least one of `attr`, `child-list` or `char-data` must be present, otherwise, no changes are monitored and no mutation events are emitted.
 
 ### Slots
 
@@ -60,10 +74,10 @@ All of the above properties reflect their values as HTML attributes to keep the 
 
 ### Events
 
-`mutation-observer:change` - Emitted when the element is mutated. A list of [MutationRecord](https://developer.mozilla.org/docs/Web/API/MutationRecord) objects is attached to `event.detail`, with information about how the target element has been changed.
+`mutation-observer:mutate` - Emitted when the element is mutated. A list of [MutationRecord](https://developer.mozilla.org/docs/Web/API/MutationRecord) objects is attached to `event.detail`, with information about how the target element has been changed.
 
 ```js
-document.querySelector('mutation-observer').addEventListener('mutation-observer:change', evt => {
+document.querySelector('mutation-observer').addEventListener('mutation-observer:mutate', evt => {
   console.log(evt.detail); // => { mutationList: [MutationRecord] }
 });
 ```

@@ -28,7 +28,7 @@ import '../src/mutation-observer-defined.js';
   });
 
   removeButton.addEventListener('click', () => {
-    const lastElement = elementsContainer.querySelector('div :last-child');
+    const lastElement = elementsContainer.querySelector('div:last-child');
 
     if (lastElement) {
       count -= 1;
@@ -38,6 +38,6 @@ import '../src/mutation-observer-defined.js';
 }());
 
 // Register events
-document.addEventListener('mutation-observer:change', evt => {
-  console.log('mutation-observer:change ->', evt.detail);
+document.addEventListener('mutation-observer:mutate', evt => {
+  console.log('mutation-observer:mutate ->', evt.detail);
 });

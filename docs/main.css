@@ -61,6 +61,17 @@ code {
   word-wrap: break-word;
 }
 
+pre {
+  overflow-x: auto;
+  background-color: #1c1b1b;
+  color: #ffffff;
+  border-radius: 0.25rem;
+}
+
+pre code {
+  color: #ffffff;
+}
+
 .btn {
   background-color: var(--button-bg-color);
   border: 1px solid transparent;
@@ -138,14 +149,6 @@ code {
   color: #055160;
   background-color: #cff4fc;
   border-color: #b6effb;
-}
-
-pre {
-  overflow-x: auto;
-  background-color: #1c1b1b;
-  color: #ffffff;
-  border-radius: 0.25rem;
-  border: 1px solid #3d3d3d;
 }
 
 .card {
