@@ -20,10 +20,10 @@ class MutationObserverElement extends HTMLElement {
 
     this._upgradeProperty('disabled');
     this._upgradeProperty('attr');
-    this._upgradeProperty('attr-old-value');
-    this._upgradeProperty('char-data');
-    this._upgradeProperty('char-data-old-value');
-    this._upgradeProperty('child-list');
+    this._upgradeProperty('attrOldValue');
+    this._upgradeProperty('charData');
+    this._upgradeProperty('charDataOldValue');
+    this._upgradeProperty('childList');
   }
 
   static get observedAttributes() {
