@@ -174,10 +174,6 @@ pre code {
   margin-top: 1rem;
 }
 
-.card h3 {
-  margin-bottom: 0.5rem;
-}
-
 [contenteditable="true"] {
   border: 1px solid var(--border-color);
   border-radius: 0.25rem;
