@@ -1,8 +1,6 @@
 import { elementUpdated, expect, fixture, fixtureCleanup, html, aTimeout, oneEvent } from '@open-wc/testing';
 import sinon from 'sinon';
-import { MutationObserverElement } from '../src/mutation-observer.js';
-
-MutationObserverElement.defineCustomElement();
+import '../src/mutation-observer-defined.js';
 
 describe('<mutation-observer>', () => {
   it('default properties', async () => {
