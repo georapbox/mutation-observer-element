@@ -152,8 +152,8 @@ class MutationObserverElement extends HTMLElement {
         characterDataOldValue: this.charDataOldValue
       });
     } catch {
-      // Suppress any errors thrown because one of the required attributes
-      // `attr`, `child-list`, `char-data` might be missing.
+      // Suppress any errors thrown if any of the required attributes
+      // `attr`, `child-list`, `char-data` are missing.
     }
   }
 

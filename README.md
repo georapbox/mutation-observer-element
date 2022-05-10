@@ -7,7 +7,7 @@
 [license]: https://georapbox.mit-license.org/@2022
 [changelog]: https://github.com/georapbox/mutation-observer-element/blob/main/CHANGELOG.md
 
-# &lt;mutation-observer&gt; element
+# &lt;mutation-observer&gt;
 
 A custom element that offers a declarative interface to the [MutationObserver API](https://developer.mozilla.org/docs/Web/API/MutationObserver).
 
