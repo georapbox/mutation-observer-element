@@ -164,6 +164,7 @@ class MutationObserverElement extends HTMLElement {
   _handleMutation(mutationList) {
     this.dispatchEvent(new CustomEvent('mutation-observer:mutate', {
       bubbles: true,
+      composed: true,
       detail: { mutationList }
     }));
   }

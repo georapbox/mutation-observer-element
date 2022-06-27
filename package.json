@@ -1,6 +1,6 @@
 {
   "name": "@georapbox/mutation-observer-element",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A custom element that offers a declarative interface to the MutationObserver API.",
   "main": "dist/mutation-observer.min.js",
   "module": "dist/mutation-observer.min.js",
