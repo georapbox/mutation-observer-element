@@ -34,25 +34,25 @@
   </mutation-observer>
 
 <pre><code class="language-html">&lt;mutation-observer attr="class" attr-old-value&gt;
-&lt;button class="btn-primary"&gt;
-  Click to mutate me
-&lt;/button&gt;
+  &lt;button class="btn-primary"&gt;
+    Click to mutate me
+  &lt;/button&gt;
 &lt;/mutation-observer&gt;
 
 &lt;script&gt;
-const mutationObserverEl = document.querySlector('mutation-observer');
-const button = mutationObserverEl.querySelector('button');
-const classNames = ['primary', 'secondary', 'success', 'danger', 'warning', 'info'];
-let count = 0;
+  const mutationObserverEl = document.querySlector('mutation-observer');
+  const button = mutationObserverEl.querySelector('button');
+  const classNames = ['primary', 'secondary', 'success', 'danger', 'warning', 'info'];
+  let count = 0;
 
-button.addEventListener('click', evt => {
-  count += 1;
-  evt.target.className = `btn-${classNames[count % classNames.length]}`;
-});
+  button.addEventListener('click', evt => {
+    count += 1;
+    evt.target.className = `btn-${classNames[count % classNames.length]}`;
+  });
 
-mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
-  console.log('mutation-observer:mutate ->', evt.detail);
-});
+  mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
+    console.log('mutation-observer:mutate ->', evt.detail);
+  });
 &lt;/script&gt;
 </code></pre>
 
@@ -73,34 +73,34 @@ mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
 &lt;button id="removeButton"&gt;Remove element&lt;/button&gt;
 
 &lt;mutation-observer child-list&gt;
-&lt;div id="elementsContainer"&gt;&lt;/div&gt;
+  &lt;div id="elementsContainer"&gt;&lt;/div&gt;
 &lt;/mutation-observer&gt;
 
 &lt;script&gt;
-const mutationObserverEl = document.querySlector('mutation-observer');
-const addButton = document.getElementById('addButton');
-const removeButton = document.getElementById('removeButton');
-const elementsContainer = document.getElementById('elementsContainer');
-let count = 0;
+  const mutationObserverEl = document.querySlector('mutation-observer');
+  const addButton = document.getElementById('addButton');
+  const removeButton = document.getElementById('removeButton');
+  const elementsContainer = document.getElementById('elementsContainer');
+  let count = 0;
 
-addButton.addEventListener('click', () => {
-  const el = document.createElement('div');
-  el.textContent = ++count;
-  elementsContainer.appendChild(el);
-});
+  addButton.addEventListener('click', () => {
+    const el = document.createElement('div');
+    el.textContent = ++count;
+    elementsContainer.appendChild(el);
+  });
 
-removeButton.addEventListener('click', () => {
-  const lastElement = elementsContainer.querySelector('div :last-child');
+  removeButton.addEventListener('click', () => {
+    const lastElement = elementsContainer.querySelector('div :last-child');
 
-  if (lastElement) {
-    count -= 1;
-    lastElement.remove();
-  }
-});
+    if (lastElement) {
+      count -= 1;
+      lastElement.remove();
+    }
+  });
 
-mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
-  console.log('mutation-observer:mutate ->', evt.detail);
-});
+  mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
+    console.log('mutation-observer:mutate ->', evt.detail);
+  });
 &lt;/script&gt;
 </code></pre>
   </div>
@@ -116,17 +116,17 @@ mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
     </mutation-observer>
 
 <pre><code class="language-html">&lt;mutation-observer char-data char-data-old-value&gt;
-&lt;div contenteditable="true"&gt;
-  Type into this content editable element to watch for mutations.
-&lt;/div&gt;
+  &lt;div contenteditable="true"&gt;
+    Type into this content editable element to watch for mutations.
+  &lt;/div&gt;
 &lt;/mutation-observer&gt;
 
 &lt;script&gt;
-const mutationObserverEl = document.querySlector('mutation-observer');
+  const mutationObserverEl = document.querySlector('mutation-observer');
 
-mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
-  console.log('mutation-observer:mutate ->', evt.detail);
-});
+  mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
+    console.log('mutation-observer:mutate ->', evt.detail);
+  });
 &lt;/script&gt;
 </code></pre>
   </div>
