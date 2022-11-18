@@ -24,7 +24,7 @@ $ npm install --save @georapbox/mutation-observer-element
 ### Script
 
 ```js
-import { MutationObserverElement } from './node_modules/@georapbox/mutation-observer-element/dist/mutation-observer.min.js';
+import { MutationObserverElement } from './node_modules/@georapbox/mutation-observer-element/dist/mutation-observer.js';
 
 // Manually define the element.
 MutationObserverElement.defineCustomElement();
@@ -33,7 +33,7 @@ MutationObserverElement.defineCustomElement();
 Alternatively, you can import the automatically defined custom element.
 
 ```js
-import './node_modules/@georapbox/mutation-observer-element/dist/mutation-observer-defined.min.js';
+import './node_modules/@georapbox/mutation-observer-element/dist/mutation-observer-defined.js';
 ```
 
 ### Markup

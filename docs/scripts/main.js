@@ -1,5 +1,5 @@
 const isLocalhost = window.location.href.includes('127.0.0.1') || window.location.href.includes('localhost');
-const componentUrl = isLocalhost ? '../../src/mutation-observer-defined.js' : 'https://unpkg.com/@georapbox/mutation-observer-element/dist/mutation-observer-defined.min.js';
+const componentUrl = isLocalhost ? '../../dist/mutation-observer-defined.js' : 'https://unpkg.com/@georapbox/mutation-observer-element/dist/mutation-observer-defined.js';
 
 import(componentUrl).then(() => {
   // Example 1

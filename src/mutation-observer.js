@@ -8,6 +8,9 @@ template.innerHTML = html`
 `;
 
 class MutationObserverElement extends HTMLElement {
+  #connected;
+  #mutationObserver;
+
   constructor() {
     super();
 
@@ -15,15 +18,6 @@ class MutationObserverElement extends HTMLElement {
       this.attachShadow({ mode: 'open' });
       this.shadowRoot.appendChild(template.content.cloneNode(true));
     }
-
-    this._handleMutation = this._handleMutation.bind(this);
-
-    this._upgradeProperty('disabled');
-    this._upgradeProperty('attr');
-    this._upgradeProperty('attrOldValue');
-    this._upgradeProperty('charData');
-    this._upgradeProperty('charDataOldValue');
-    this._upgradeProperty('childList');
   }
 
   static get observedAttributes() {
@@ -31,8 +25,8 @@ class MutationObserverElement extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if (name === 'disabled' && oldValue !== newValue && this._connected) {
-      this.disabled ? this._stopObserver() : this._startObserver();
+    if (name === 'disabled' && oldValue !== newValue && this.#connected) {
+      this.disabled ? this.#stopObserver() : this.#startObserver();
     }
 
     const shouldRestartObserver = (
@@ -41,29 +35,36 @@ class MutationObserverElement extends HTMLElement {
       || name === 'char-data'
       || name === 'char-data-old-value'
       || name === 'child-list'
-    ) && oldValue !== newValue && this._connected;
+    ) && oldValue !== newValue && this.#connected;
 
     if (shouldRestartObserver) {
-      this._stopObserver();
-      this._startObserver();
+      this.#stopObserver();
+      this.#startObserver();
     }
   }
 
   connectedCallback() {
-    this._connected = true;
+    this.#upgradeProperty('disabled');
+    this.#upgradeProperty('attr');
+    this.#upgradeProperty('attrOldValue');
+    this.#upgradeProperty('charData');
+    this.#upgradeProperty('charDataOldValue');
+    this.#upgradeProperty('childList');
+
+    this.#connected = true;
 
     if ('MutationObserver' in window) {
-      this._mutationObserver = new MutationObserver(this._handleMutation);
+      this.#mutationObserver = new MutationObserver(this.#handleMutation);
 
       if (!this.disabled) {
-        this._startObserver();
+        this.#startObserver();
       }
     }
   }
 
   disconnectedCallback() {
-    this._connected = false;
-    this._stopObserver();
+    this.#connected = false;
+    this.#stopObserver();
   }
 
   get disabled() {
@@ -134,15 +135,15 @@ class MutationObserverElement extends HTMLElement {
     }
   }
 
-  _startObserver() {
-    if (!this._mutationObserver) {
+  #startObserver() {
+    if (!this.#mutationObserver) {
       return;
     }
 
     const hasObservedAttributes = typeof this.attr === 'string' && this.attr.length > 0;
 
     try {
-      this._mutationObserver.observe(this, {
+      this.#mutationObserver.observe(this, {
         subtree: true,
         attributes: hasObservedAttributes,
         attributeOldValue: this.attrOldValue,
@@ -157,19 +158,19 @@ class MutationObserverElement extends HTMLElement {
     }
   }
 
-  _stopObserver() {
-    this._mutationObserver && this._mutationObserver.disconnect();
+  #stopObserver() {
+    this.#mutationObserver && this.#mutationObserver.disconnect();
   }
 
-  _handleMutation(mutationList) {
+  #handleMutation = mutationList => {
     this.dispatchEvent(new CustomEvent('mutation-observer:mutate', {
       bubbles: true,
       composed: true,
       detail: { mutationList }
     }));
-  }
+  };
 
-  _upgradeProperty(prop) {
+  #upgradeProperty(prop) {
     if (Object.prototype.hasOwnProperty.call(this, prop)) {
       const value = this[prop];
       delete this[prop];

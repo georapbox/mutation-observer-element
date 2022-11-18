@@ -1,11 +1,35 @@
 {
   "name": "@georapbox/mutation-observer-element",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "A custom element that offers a declarative interface to the MutationObserver API.",
-  "main": "dist/mutation-observer.min.js",
-  "module": "dist/mutation-observer.min.js",
-  "unpkg": "dist/mutation-observer.min.js",
+  "main": "dist/mutation-observer.js",
+  "module": "dist/mutation-observer.js",
+  "unpkg": "dist/mutation-observer.js",
   "type": "module",
+  "targets": {
+    "mutation-observer": {
+      "context": "browser",
+      "outputFormat": "esmodule",
+      "source": "src/mutation-observer.js",
+      "optimize": true,
+      "isLibrary": true,
+      "distDir": "dist",
+      "engines": {
+        "browsers": "> 0.5%, last 2 versions, not dead"
+      }
+    },
+    "mutation-observer-defined": {
+      "context": "browser",
+      "outputFormat": "esmodule",
+      "source": "src/mutation-observer-defined.js",
+      "optimize": true,
+      "isLibrary": true,
+      "distDir": "dist",
+      "engines": {
+        "browsers": "> 0.5%, last 2 versions, not dead"
+      }
+    }
+  },
   "files": [
     "/src",
     "/dist"
@@ -15,8 +39,10 @@
     "test": "web-test-runner",
     "test:watch": "npm run test -- --watch",
     "test:coverage": "npm run test -- --coverage",
-    "build": "rollup -c --environment BUILD:production",
-    "clean": "rimraf dist coverage",
+    "dev": "parcel watch",
+    "build:parcel": "parcel build",
+    "build": "npm-run-all clean build:parcel",
+    "clean": "rimraf dist coverage .parcel-cache",
     "prepare": "npm-run-all clean lint test build"
   },
   "keywords": [
@@ -39,19 +65,14 @@
   "homepage": "https://github.com/georapbox/mutation-observer-element#readme",
   "devDependencies": {
     "@esm-bundle/chai": "~4.3.4-fix.0",
-    "@open-wc/testing": "~3.1.4",
-    "@web/test-runner": "~0.13.27",
-    "@web/test-runner-playwright": "~0.8.8",
-    "eslint": "~8.14.0",
+    "@open-wc/testing": "~3.1.7",
+    "@web/test-runner": "~0.15.0",
+    "@web/test-runner-playwright": "~0.9.0",
+    "eslint": "~8.27.0",
     "eslint-plugin-wc": "~1.3.2",
     "npm-run-all": "~4.1.5",
+    "parcel": "~2.8.0",
     "rimraf": "~3.0.2",
-    "rollup": "~2.70.1",
-    "rollup-plugin-terser": "~7.0.2",
-    "sinon": "~13.0.1"
-  },
-  "engines": {
-    "node": ">=14.0.0",
-    "npm": ">=6.0.0"
+    "sinon": "~14.0.2"
   }
 }
