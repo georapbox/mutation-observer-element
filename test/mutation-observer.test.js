@@ -6,7 +6,7 @@ describe('<mutation-observer>', () => {
   it('default properties', async () => {
     const el = await fixture(html`<mutation-observer></mutation-observer>`);
 
-    expect(el.attr).to.be.null;
+    expect(el.attr).to.equal('');
     expect(el.getAttribute('attr')).to.be.null;
 
     expect(el.attrOldValue).to.be.false;
@@ -27,14 +27,7 @@ describe('<mutation-observer>', () => {
 
   it('change default properties', async () => {
     const el = await fixture(html`
-      <mutation-observer
-        attr="*"
-        attr-old-value
-        child-list
-        char-data
-        char-data-old-value
-        disabled
-      ></mutation-observer>
+      <mutation-observer attr="*" attr-old-value child-list char-data char-data-old-value disabled></mutation-observer>
     `);
 
     expect(el.attr).to.equal('*');
@@ -130,9 +123,7 @@ describe('<mutation-observer>', () => {
   });
 
   it('observe addition of new child nodes', async () => {
-    const el = await fixture(html`
-      <mutation-observer child-list></mutation-observer>
-    `);
+    const el = await fixture(html` <mutation-observer child-list></mutation-observer> `);
 
     let count = 0;
     const node = document.createElement('div');

@@ -11,6 +11,7 @@ describe('<mutation-observer> upgrading', () => {
     el.childList = true;
     el.charData = true;
     el.charDataOldValue = true;
+    el.disabled = true;
 
     // Upgrade custom element
     MutationObserverElement.defineCustomElement();
@@ -22,6 +23,7 @@ describe('<mutation-observer> upgrading', () => {
     expect(el.getAttribute('child-list')).to.equal('');
     expect(el.getAttribute('char-data')).to.equal('');
     expect(el.getAttribute('char-data-old-value')).to.equal('');
+    expect(el.getAttribute('disabled')).to.equal('');
   });
 
   afterEach(() => {

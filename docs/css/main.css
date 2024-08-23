@@ -1,33 +1,56 @@
+:root {
+  --body-max-width: 900px;
+
+  scroll-behavior: smooth;
+}
+
+.noscript-banner {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--border-radius);
+  background-color: #f8d7da;
+  text-align: center;
+  color: #000000;
+}
+
+.component-description p {
+  margin: 0 0 0.5rem 0;
+}
+
+.table-of-contents>li {
+  line-height: 1.6;
+}
+
 .btn-primary,
-.btn-primary:hover {
+.btn-primary:not(:disabled):hover {
   color: #fff;
   background-color: #0d6efd;
   border-color: #0d6efd;
 }
 
 .btn-success,
-.btn-success:hover {
+.btn-success:not(:disabled):hover {
   color: #fff;
   background-color: #198754;
   border-color: #198754;
 }
 
 .btn-danger,
-.btn-danger:hover {
+.btn-danger:not(:disabled):hover {
   color: #fff;
   background-color: #dc3545;
   border-color: #dc3545;
 }
 
 .btn-warning,
-.btn-warning:hover {
+.btn-warning:not(:disabled):hover {
   color: #000;
   background-color: #ffc107;
   border-color: #ffc107;
 }
 
 .btn-info,
-.btn-info:hover {
+.btn-info:not(:disabled):hover {
   color: #000;
   background-color: #0dcaf0;
   border-color: #0dcaf0;
@@ -87,4 +110,17 @@ button[class^="btn"]:focus {
   justify-content: center;
   align-items: center;
   border-radius: 4px;
+}
+
+.info-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--border-radius);
+  background-color: var(--background);
+}
+
+.info-box svg {
+  min-width: 16px;
 }

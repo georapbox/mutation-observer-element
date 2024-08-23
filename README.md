@@ -2,9 +2,7 @@
 [![npm license](https://img.shields.io/npm/l/@georapbox/mutation-observer-element.svg)](https://www.npmjs.com/package/@georapbox/mutation-observer-element)
 
 [demo]: https://georapbox.github.io/mutation-observer-element/
-[support]: https://caniuse.com/#feat=custom-elementsv1
-[polyfill]: https://github.com/webcomponents/polyfills/tree/master/packages/custom-elements
-[license]: https://georapbox.mit-license.org/@2022
+[license]: https://github.com/georapbox/mutation-observer-element/blob/main/LICENSE
 [changelog]: https://github.com/georapbox/mutation-observer-element/blob/main/CHANGELOG.md
 
 # &lt;mutation-observer&gt;
@@ -55,14 +53,12 @@ import './node_modules/@georapbox/mutation-observer-element/dist/mutation-observ
 ### Properties
 | Name | Reflects | Type | Default | Description |
 | ---- | -------- | ---- | ------- | ----------- |
-| `attr` | ✓ | String | `null` | A string of attribute names to be monitored. To monitor specific attributes' changes, separate them by a space, eg `title class href`. To monitor all attributes' changes, use `*`. |
+| `attr` | ✓ | String | `""` | A space-separated string of attribute names to monitor (e.g., "title class href"). Use "*" to monitor all attributes. |
 | `attrOldValue`<br><small>`attr-old-value`</small> | ✓ | Boolean | `false` | Set to `true` to record the previous value of any attribute that changes when monitoring the node or nodes for attribute changes. |
-| `childList`<br><small>`child-list`</small> | ✓ | Boolean | `false` |  Set to `true` to monitor the target node for the addition of new child nodes or removal of existing child nodes. |
+| `childList`<br><small>`child-list`</small> | ✓ | Boolean | `false` | Set to `true` to monitor the target node for the addition of new child nodes or removal of existing child nodes. |
 | `charData`<br><small>`char-data`</small> | ✓ | Boolean | `false` | Set to `true` to monitor the specified target node for changes to the character data contained within the node or nodes. |
 | `charDataOldValue`<br><small>`char-data-old-value`</small> | ✓ | Boolean | `false` | Set to `true` to record the previous value of a node's text whenever the text changes on nodes being monitored. |
 | `disabled` | ✓ | Boolean | `false` | Set to `true` to stop monitoring for mutations. |
-
-All of the above properties reflect their values as HTML attributes to keep the element's DOM representation in sync with its JavaScript state.
 
 > NOTE: From the properties above, at least one of `attr`, `child-list` or `char-data` must be present, otherwise, no changes are monitored and no mutation events are emitted.
 
@@ -70,30 +66,70 @@ All of the above properties reflect their values as HTML attributes to keep the 
 
 | Name | Description |
 | ---- | ----------- |
-| (default) | The element(s) to observe for mutations. |
+| (default) | The default slot where the target node or nodes to be monitored are placed. |
+
+### Methods
+
+| Name | Type | Description | Arguments |
+| ---- | ---- | ----------- | --------- |
+| `defineCustomElement` | Static | Defines/registers the custom element with the name provided. If no name is provided, the default name is used. The method checks if the element is already defined, hence will skip trying to redefine it. | `elementName='mutation-observer'` |
 
 ### Events
 
-`mutation-observer:mutate` - Emitted when the element is mutated. A list of [MutationRecord](https://developer.mozilla.org/docs/Web/API/MutationRecord) objects is attached to `event.detail`, with information about how the target element has been changed.
-
-```js
-document.querySelector('mutation-observer').addEventListener('mutation-observer:mutate', evt => {
-  console.log(evt.detail); // => { mutationList: [MutationRecord] }
-});
-```
+| Name | Description | Event Detail |
+| ---- | ----------- | ------------ |
+| `mutation-observer:mutate` | Emitted when the element is mutated. | `{ mutationList: MutationRecord[]` |
 
 ## Changelog
 
 For API updates and breaking changes, check the [CHANGELOG][changelog].
 
-## Browser support
+## Development setup
 
-Browsers without native [custom element support][support] require a [polyfill][polyfill].
+### Prerequisites
 
-- Firefox
-- Chrome
-- Microsoft Edge
-- Safari
+The project requires `Node.js` and `npm` to be installed on your environment. Preferrably, use [nvm](https://github.com/nvm-sh/nvm) Node Version Manager and use the version of Node.js specified in the `.nvmrc` file by running `nvm use`.
+
+### Install dependencies
+
+Install the project dependencies by running the following command.
+
+```sh
+npm install
+```
+
+### Build for development
+
+Watch for changes and start a development server by running the following command.
+
+```sh
+npm start
+```
+
+### Linting
+
+Lint the code by running the following command.
+
+```sh
+npm run lint
+```
+
+### Testing
+
+Run the tests by running any of the following commands.
+
+```sh
+npm test
+npm run test:watch # watch mode
+```
+
+### Build for production
+
+Create a production build by running the following command.
+
+```sh
+npm run build
+```
 
 ## License
 
