@@ -4,6 +4,12 @@
   scroll-behavior: smooth;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 .noscript-banner {
   width: 100%;
   padding: 0.5rem 0.75rem;
