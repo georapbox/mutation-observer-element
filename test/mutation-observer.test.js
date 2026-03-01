@@ -3,6 +3,11 @@ import sinon from 'sinon';
 import '../src/mutation-observer-defined.js';
 
 describe('<mutation-observer>', () => {
+  afterEach(() => {
+    fixtureCleanup();
+    sinon.restore();
+  });
+
   it('default properties', async () => {
     const el = await fixture(html`<mutation-observer></mutation-observer>`);
 
@@ -155,10 +160,6 @@ describe('<mutation-observer>', () => {
 
     await aTimeout(200);
 
-    expect(handler).to.not.have.been.calledOnce;
-  });
-
-  afterEach(() => {
-    fixtureCleanup();
+    sinon.assert.notCalled(handler);
   });
 });
