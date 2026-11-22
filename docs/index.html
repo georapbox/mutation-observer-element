@@ -34,7 +34,11 @@
     custom element to observe changes to the DOM.
   </p>
 
-  <p>Open the browser's console to watch emitted events.</p>
+  <p class="console-notice">
+    <strong>Open your browser's developer console before trying the examples.</strong>
+    Each interaction logs a <code>mutation-observer-change</code> event
+    containing the observed mutation records.
+  </p>
 
   <details open>
     <summary>Table of contents</summary>
@@ -49,14 +53,20 @@
   <h3 id="example-attr">Attribute changes</h3>
 
   <p>
-    Click the button to change its <code>class</code> attribute and observe the
-    mutations, including the previous attribute value.
+    Mark the task as completed or incomplete to observe changes to its
+    <code>class</code> attribute, including the previous value.
   </p>
 
   <div class="card">
     <browser-window url="https://github.com/georapbox/mutation-observer-element" icon>
       <mutation-observer id="mutationObserver1" attr="class" attr-old-value>
-        <button type="button" class="btn-primary">Click to mutate me</button>
+        <div id="taskItem" class="task">
+          <label>
+            <input type="checkbox" id="taskCheckbox">
+            Review pull request
+          </label>
+          <span id="taskStatus">Pending</span>
+        </div>
       </mutation-observer>
     </browser-window>
 
@@ -64,24 +74,28 @@
       <summary>Code sample</summary>
 
 <pre><code class="language-html">&lt;mutation-observer attr="class" attr-old-value&gt;
-  &lt;button class="btn-primary"&gt;
-    Click to mutate me
-  &lt;/button&gt;
+  &lt;div class="task"&gt;
+    &lt;label&gt;
+      &lt;input type="checkbox" id="taskCheckbox"&gt;
+      Review pull request
+    &lt;/label&gt;
+    &lt;span id="taskStatus"&gt;Pending&lt;/span&gt;
+  &lt;/div&gt;
 &lt;/mutation-observer&gt;
 
 &lt;script&gt;
   const mutationObserverEl = document.querySelector('mutation-observer');
-  const button = mutationObserverEl.querySelector('button');
-  const classNames = ['primary', 'secondary', 'success', 'danger', 'warning', 'info'];
-  let count = 0;
+  const checkbox = document.getElementById('taskCheckbox');
+  const taskItem = mutationObserverEl.querySelector('.task');
+  const taskStatus = document.getElementById('taskStatus');
 
-  button.addEventListener('click', evt => {
-    count += 1;
-    evt.target.className = `btn-${classNames[count % classNames.length]}`;
+  checkbox.addEventListener('change', () => {
+    taskItem.classList.toggle('completed', checkbox.checked);
+    taskStatus.textContent = checkbox.checked ? 'Completed' : 'Pending';
   });
 
   mutationObserverEl.addEventListener('mutation-observer-change', evt => {
-    console.log('mutation-observer-change ->', evt.detail);
+    console.log('mutation-observer-change ->', evt.detail.mutations);
   });
 &lt;/script&gt;</code></pre>
     </details>
@@ -91,88 +105,102 @@
   <h3 id="example-child-list">Child node changes</h3>
 
   <p>
-    Use the buttons below to add or remove child elements and observe how
-    the DOM changes.
+    Add or remove tasks from the list to observe changes to its child nodes.
   </p>
 
   <div class="card">
     <browser-window url="https://github.com/georapbox/mutation-observer-element" icon>
-      <button type="button" id="addButton">Add element</button>
-      <button type="button" id="removeButton">Remove element</button>
+      <button type="button" id="addButton">Add task</button>
+      <button type="button" id="removeButton">Remove last task</button>
 
       <mutation-observer id="mutationObserver2" child-list>
-        <div id="elementsContainer"></div>
+        <ul id="taskList">
+          <li>Review pull request</li>
+          <li>Update documentation</li>
+        </ul>
       </mutation-observer>
     </browser-window>
 
     <details>
       <summary>Code sample</summary>
 
-<pre><code class="language-html">&lt;button id="addButton"&gt;Add element&lt;/button&gt;
-&lt;button id="removeButton"&gt;Remove element&lt;/button&gt;
+<pre><code class="language-html">&lt;button type="button" id="addButton"&gt;Add task&lt;/button&gt;
+&lt;button type="button" id="removeButton"&gt;Remove last task&lt;/button&gt;
 
 &lt;mutation-observer child-list&gt;
-  &lt;div id="elementsContainer"&gt;&lt;/div&gt;
+  &lt;ul id="taskList"&gt;
+    &lt;li&gt;Review pull request&lt;/li&gt;
+    &lt;li&gt;Update documentation&lt;/li&gt;
+  &lt;/ul&gt;
 &lt;/mutation-observer&gt;
 
 &lt;script&gt;
   const mutationObserverEl = document.querySelector('mutation-observer');
   const addButton = document.getElementById('addButton');
   const removeButton = document.getElementById('removeButton');
-  const elementsContainer = document.getElementById('elementsContainer');
-  let count = 0;
+  const taskList = document.getElementById('taskList');
+  let count = taskList.children.length;
 
   addButton.addEventListener('click', () => {
-    const el = document.createElement('div');
-    el.textContent = ++count;
-    elementsContainer.appendChild(el);
+    const task = document.createElement('li');
+    task.textContent = `Task ${++count}`;
+    taskList.appendChild(task);
   });
 
   removeButton.addEventListener('click', () => {
-    const lastElement = elementsContainer.lastElementChild;
+    const lastTask = taskList.lastElementChild;
 
-    if (lastElement) {
-      count -= 1;
-      lastElement.remove();
+    if (lastTask) {
+      lastTask.remove();
     }
   });
 
   mutationObserverEl.addEventListener('mutation-observer-change', evt => {
-    console.log('mutation-observer-change ->', evt.detail);
+    console.log('mutation-observer-change ->', evt.detail.mutations);
   });
 &lt;/script&gt;</code></pre>
     </details>
   </div>
 
   <!-- Example 3 -->
-  <h3 id="example-child-list">Child node changes</h3>
+  <h3 id="example-char-data">Character data changes</h3>
 
   <p>
-    Use the buttons below to add or remove child elements and observe how
-    the DOM changes.
+    Edit the task name to observe changes to its text content, including
+    the previous value.
   </p>
 
   <div class="card">
     <browser-window url="https://github.com/georapbox/mutation-observer-element" icon>
-      <mutation-observer char-data char-data-old-value>
-        <div contenteditable="true" tabindex="0" spellcheck="false">Type into this content editable element to watch for mutations.</div>
+      <label for="taskNameInput">Task name:</label>
+      <input type="text" id="taskNameInput" value="Review pull request">
+
+      <mutation-observer id="mutationObserver3" char-data char-data-old-value>
+        <p>Task preview: <span id="taskLabel">Review pull request</span></p>
       </mutation-observer>
     </browser-window>
 
     <details>
       <summary>Code sample</summary>
 
-<pre><code class="language-html">&lt;mutation-observer char-data char-data-old-value&gt;
-  &lt;div contenteditable="true"&gt;
-    Type into this content editable element to watch for mutations.
-  &lt;/div&gt;
+<pre><code class="language-html">&lt;label for="taskNameInput"&gt;Task name:&lt;/label&gt;
+&lt;input type="text" id="taskNameInput" value="Review pull request"&gt;
+
+&lt;mutation-observer char-data char-data-old-value&gt;
+  &lt;p&gt;Task preview: &lt;span id="taskLabel"&gt;Review pull request&lt;/span&gt;&lt;/p&gt;
 &lt;/mutation-observer&gt;
 
 &lt;script&gt;
   const mutationObserverEl = document.querySelector('mutation-observer');
+  const input = document.getElementById('taskNameInput');
+  const taskLabel = document.getElementById('taskLabel');
+
+  input.addEventListener('input', () => {
+    taskLabel.firstChild.data = input.value;
+  });
 
   mutationObserverEl.addEventListener('mutation-observer-change', evt => {
-    console.log('mutation-observer-change ->', evt.detail);
+    console.log('mutation-observer-change ->', evt.detail.mutations);
   });
 &lt;/script&gt;</code></pre>
     </details>

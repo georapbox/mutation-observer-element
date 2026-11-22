@@ -7,43 +7,53 @@ const componentUrl = `${basePath}/dist/mutation-observer.js`;
 const { MutationObserverElement } = await import(componentUrl);
 MutationObserverElement.define();
 
-// Example 1
+// Example 1 - Attribute changes
 (function () {
-  const mutationObserverEl = document.getElementById('mutationObserver1');
-  const button = mutationObserverEl.querySelector('button');
-  const classNames = ['primary', 'success', 'danger', 'warning', 'info'];
-  let count = 0;
+  const checkbox = document.getElementById('taskCheckbox');
+  const taskItem = document.getElementById('taskItem');
+  const taskStatus = document.getElementById('taskStatus');
 
-  button.addEventListener('click', evt => {
-    count += 1;
-    evt.target.className = `btn-${classNames[count % classNames.length]}`;
+  checkbox.addEventListener('change', () => {
+    taskItem.classList.toggle('completed', checkbox.checked);
+    taskStatus.textContent = checkbox.checked ? 'Completed' : 'Pending';
   });
 })();
 
-// Example 2
+// Example 2 - Child node changes
 (function () {
   const addButton = document.getElementById('addButton');
   const removeButton = document.getElementById('removeButton');
-  const elementsContainer = document.getElementById('elementsContainer');
-  let count = 0;
+  const taskList = document.getElementById('taskList');
+  let count = taskList.children.length;
 
   addButton.addEventListener('click', () => {
-    const el = document.createElement('div');
-    el.textContent = ++count;
-    elementsContainer.appendChild(el);
+    const task = document.createElement('li');
+    task.textContent = `Task ${++count}`;
+    taskList.appendChild(task);
   });
 
   removeButton.addEventListener('click', () => {
-    const lastElement = elementsContainer.lastElementChild;
-    console.log(lastElement);
+    const lastTask = taskList.lastElementChild;
 
-    if (lastElement) {
-      count -= 1;
-      lastElement.remove();
+    if (lastTask) {
+      lastTask.remove();
     }
   });
 })();
 
-document.addEventListener('mutation-observer-change', evt => {
-  console.table('mutation-observer-change', evt.detail);
+// Example 3 - Character data changes
+(function () {
+  const input = document.getElementById('taskNameInput');
+  const taskLabel = document.getElementById('taskLabel');
+
+  input.addEventListener('input', () => {
+    taskLabel.firstChild.data = input.value;
+  });
+})();
+
+// Log mutation events from all examples
+document.querySelectorAll('mutation-observer').forEach(el => {
+  el.addEventListener('mutation-observer-change', evt => {
+    console.log('mutation-observer-change', evt.detail.mutations);
+  });
 });
