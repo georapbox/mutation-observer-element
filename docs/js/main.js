@@ -1,8 +1,11 @@
-const url = window.location.href;
-const isLocalhost = url.includes('127.0.0.1') || url.includes('localhost');
-const componentUrl = isLocalhost ? '../../dist/mutation-observer-defined.js' : '../lib/mutation-observer-defined.js';
+import '../lib/browser-window.js';
 
-import(componentUrl);
+const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
+const basePath = isLocal ? '../..' : '..';
+const componentUrl = `${basePath}/dist/mutation-observer.js`;
+
+const { MutationObserverElement } = await import(componentUrl);
+MutationObserverElement.define();
 
 // Example 1
 (function () {
@@ -31,7 +34,8 @@ import(componentUrl);
   });
 
   removeButton.addEventListener('click', () => {
-    const lastElement = elementsContainer.querySelector('div:last-child');
+    const lastElement = elementsContainer.lastElementChild;
+    console.log(lastElement);
 
     if (lastElement) {
       count -= 1;
@@ -40,10 +44,6 @@ import(componentUrl);
   });
 })();
 
-document.addEventListener('mutation-observer:mutate', evt => {
-  console.log('mutation-observer:mutate ->', evt.detail);
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-  window.hljs.highlightAll();
+document.addEventListener('mutation-observer-change', evt => {
+  console.table('mutation-observer-change', evt.detail);
 });

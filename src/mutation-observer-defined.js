@@ -1,5 +1,5 @@
 import { MutationObserverElement } from './mutation-observer.js';
 
-MutationObserverElement.defineCustomElement();
+MutationObserverElement.define();
 
 export { MutationObserverElement };

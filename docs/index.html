@@ -11,15 +11,13 @@
   <link rel="stylesheet" href="lib/highlight/highlight-github.css">
   <link rel="stylesheet" href="css/water.css">
   <link rel="stylesheet" href="css/main.css">
-  <script src="js/main.js" type="module"></script>
   <script src="lib/highlight/highlight.min.js" defer></script>
+  <script src="js/main.js" type="module"></script>
+  <script>document.addEventListener('DOMContentLoaded', () => window.hljs.highlightAll());</script>
 </head>
 <body>
   <noscript>
-    <div class="noscript-banner">
-      This page requires JavaScript to work properly.
-      Please enable JavaScript in your browser settings.
-    </div>
+    <div class="noscript-banner">This demo requires JavaScript to work.</div>
   </noscript>
 
   <h1>&lt;mutation-observer&gt;</h1>
@@ -32,33 +30,38 @@
   <h2>Examples</h2>
 
   <p>
-    The following examples demonstrate how to use the <code>&lt;mutation-observer&gt;</code> custom element to observe changes to the DOM.
+    The following examples demonstrate how to use the <code>&lt;mutation-observer&gt;</code>
+    custom element to observe changes to the DOM.
   </p>
 
-  <ol class="table-of-contents">
-    <li><a href="#example-attr">Observing attributes changes</a></li>
-    <li><a href="#example-child-list">Observing addition of new child nodes or removal of existing child nodes</a></li>
-    <li><a href="#example-char-data">Observing changes to the character data contained within the node</a></li>
-  </ol>
-
-  <div class="info-box">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="var(--links)" class="bi bi-terminal" viewBox="0 0 16 16">
-      <path d="M6 9a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3A.5.5 0 0 1 6 9M3.854 4.146a.5.5 0 1 0-.708.708L4.793 6.5 3.146 8.146a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2z"></path>
-      <path d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"></path>
-    </svg>
-    <small><em>Open the browser's console to watch emitted events.</em></small>
-  </div>
-
-  <!-- Example 1 -->
-  <h3 id="example-attr"><a href="#example-attr">#</a> Example 1</h3>
-  <p>Observing attributes changes: <code>class</code></p>
-
-  <mutation-observer id="mutationObserver1" attr="class" attr-old-value>
-    <button type="button" class="btn-primary">Click to mutate me</button>
-  </mutation-observer>
+  <p>Open the browser's console to watch emitted events.</p>
 
   <details open>
-    <summary>Source code</summary>
+    <summary>Table of contents</summary>
+    <ol class="table-of-contents">
+      <li><a href="#example-attr">Attribute changes</a></li>
+      <li><a href="#example-child-list">Child node changes</a></li>
+      <li><a href="#example-char-data">Character data changes</a></li>
+    </ol>
+  </details>
+
+  <!-- Example 1 -->
+  <h3 id="example-attr">Attribute changes</h3>
+
+  <p>
+    Click the button to change its <code>class</code> attribute and observe the
+    mutations, including the previous attribute value.
+  </p>
+
+  <div class="card">
+    <browser-window url="https://github.com/georapbox/mutation-observer-element" icon>
+      <mutation-observer id="mutationObserver1" attr="class" attr-old-value>
+        <button type="button" class="btn-primary">Click to mutate me</button>
+      </mutation-observer>
+    </browser-window>
+
+    <details>
+      <summary>Code sample</summary>
 
 <pre><code class="language-html">&lt;mutation-observer attr="class" attr-old-value&gt;
   &lt;button class="btn-primary"&gt;
@@ -67,7 +70,7 @@
 &lt;/mutation-observer&gt;
 
 &lt;script&gt;
-  const mutationObserverEl = document.querySlector('mutation-observer');
+  const mutationObserverEl = document.querySelector('mutation-observer');
   const button = mutationObserverEl.querySelector('button');
   const classNames = ['primary', 'secondary', 'success', 'danger', 'warning', 'info'];
   let count = 0;
@@ -77,25 +80,33 @@
     evt.target.className = `btn-${classNames[count % classNames.length]}`;
   });
 
-  mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
-    console.log('mutation-observer:mutate ->', evt.detail);
+  mutationObserverEl.addEventListener('mutation-observer-change', evt => {
+    console.log('mutation-observer-change ->', evt.detail);
   });
 &lt;/script&gt;</code></pre>
-  </details>
+    </details>
+  </div>
 
   <!-- Example 2 -->
-  <h3 id="example-child-list"><a href="#example-child-list">#</a> Example 2</h3>
-  <p>Observing addition of new child nodes or removal of existing child nodes</p>
+  <h3 id="example-child-list">Child node changes</h3>
 
-  <button type="button" id="addButton">Add element</button>
-  <button type="button" id="removeButton">Remove element</button>
+  <p>
+    Use the buttons below to add or remove child elements and observe how
+    the DOM changes.
+  </p>
 
-  <mutation-observer id="mutationObserver2" child-list>
-    <div id="elementsContainer"></div>
-  </mutation-observer>
+  <div class="card">
+    <browser-window url="https://github.com/georapbox/mutation-observer-element" icon>
+      <button type="button" id="addButton">Add element</button>
+      <button type="button" id="removeButton">Remove element</button>
 
-  <details open>
-    <summary>Source code</summary>
+      <mutation-observer id="mutationObserver2" child-list>
+        <div id="elementsContainer"></div>
+      </mutation-observer>
+    </browser-window>
+
+    <details>
+      <summary>Code sample</summary>
 
 <pre><code class="language-html">&lt;button id="addButton"&gt;Add element&lt;/button&gt;
 &lt;button id="removeButton"&gt;Remove element&lt;/button&gt;
@@ -105,7 +116,7 @@
 &lt;/mutation-observer&gt;
 
 &lt;script&gt;
-  const mutationObserverEl = document.querySlector('mutation-observer');
+  const mutationObserverEl = document.querySelector('mutation-observer');
   const addButton = document.getElementById('addButton');
   const removeButton = document.getElementById('removeButton');
   const elementsContainer = document.getElementById('elementsContainer');
@@ -118,7 +129,7 @@
   });
 
   removeButton.addEventListener('click', () => {
-    const lastElement = elementsContainer.querySelector('div :last-child');
+    const lastElement = elementsContainer.lastElementChild;
 
     if (lastElement) {
       count -= 1;
@@ -126,22 +137,30 @@
     }
   });
 
-  mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
-    console.log('mutation-observer:mutate ->', evt.detail);
+  mutationObserverEl.addEventListener('mutation-observer-change', evt => {
+    console.log('mutation-observer-change ->', evt.detail);
   });
 &lt;/script&gt;</code></pre>
-  </details>
+    </details>
+  </div>
 
   <!-- Example 3 -->
-  <h3 id="example-char-data"><a href="#example-char-data">#</a> Example 3</h3>
-  <p>Observing changes to the character data contained within the node</p>
+  <h3 id="example-child-list">Child node changes</h3>
 
-  <mutation-observer char-data char-data-old-value>
-    <div contenteditable="true" tabindex="0" spellcheck="false">Type into this content editable element to watch for mutations.</div>
-  </mutation-observer>
+  <p>
+    Use the buttons below to add or remove child elements and observe how
+    the DOM changes.
+  </p>
 
-  <details open>
-    <summary>Source code</summary>
+  <div class="card">
+    <browser-window url="https://github.com/georapbox/mutation-observer-element" icon>
+      <mutation-observer char-data char-data-old-value>
+        <div contenteditable="true" tabindex="0" spellcheck="false">Type into this content editable element to watch for mutations.</div>
+      </mutation-observer>
+    </browser-window>
+
+    <details>
+      <summary>Code sample</summary>
 
 <pre><code class="language-html">&lt;mutation-observer char-data char-data-old-value&gt;
   &lt;div contenteditable="true"&gt;
@@ -150,18 +169,31 @@
 &lt;/mutation-observer&gt;
 
 &lt;script&gt;
-  const mutationObserverEl = document.querySlector('mutation-observer');
+  const mutationObserverEl = document.querySelector('mutation-observer');
 
-  mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
-    console.log('mutation-observer:mutate ->', evt.detail);
+  mutationObserverEl.addEventListener('mutation-observer-change', evt => {
+    console.log('mutation-observer-change ->', evt.detail);
   });
 &lt;/script&gt;</code></pre>
-  </details>
+    </details>
+  </div>
 
   <h2>License</h2>
 
   <p>
     <a href="https://github.com/georapbox/mutation-observer-element/blob/main/LICENSE" target="_blank" rel="noreferrer noopener">The MIT License (MIT)</a>
   </p>
+
+  <script>
+    document.querySelectorAll('button[data-open], button[command]').forEach(el => el.removeAttribute('disabled'));
+
+    document.querySelectorAll('h3[id^="example-"]').forEach((el, index) => {
+      el.insertAdjacentHTML('afterbegin', `<a href="#${el.getAttribute('id')}">#</a> Example ${index + 1} - `);
+    });
+
+    document.querySelectorAll('.card').forEach(el => {
+      el.insertAdjacentHTML('afterend', `<div class="back-top"><a href="#">↑ Back to top</a></div>`);
+    });
+  </script>
 </body>
 </html>

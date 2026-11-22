@@ -1,11 +1,16 @@
-import { elementUpdated, expect, fixture, fixtureCleanup, html } from '@open-wc/testing';
+import { expect, fixture, fixtureCleanup, html } from '@open-wc/testing';
 import { MutationObserverElement } from '../src/mutation-observer.js';
 
-describe('<mutation-observer> upgrading', () => {
-  it('default properties', async () => {
-    const el = await fixture(html`<mutation-observer></mutation-observer>`);
+describe('mutation-observer upgrading', () => {
+  afterEach(() => {
+    fixtureCleanup();
+  });
 
-    // Update properties before upgrading
+  it('should preserve properties set before the custom element is defined', async () => {
+    const container = await fixture(html`<div></div>`);
+    const el = document.createElement('mutation-observer');
+
+    // Set properties before upgrading
     el.attr = '*';
     el.attrOldValue = true;
     el.childList = true;
@@ -13,10 +18,12 @@ describe('<mutation-observer> upgrading', () => {
     el.charDataOldValue = true;
     el.disabled = true;
 
-    // Upgrade custom element
-    MutationObserverElement.defineCustomElement();
+    // Define and explicitly upgrade the custom element
+    MutationObserverElement.define();
+    customElements.upgrade(el);
 
-    await elementUpdated(el);
+    // Connect the element so connectedCallback runs
+    container.appendChild(el);
 
     expect(el.getAttribute('attr')).to.equal('*');
     expect(el.getAttribute('attr-old-value')).to.equal('');
@@ -24,9 +31,5 @@ describe('<mutation-observer> upgrading', () => {
     expect(el.getAttribute('char-data')).to.equal('');
     expect(el.getAttribute('char-data-old-value')).to.equal('');
     expect(el.getAttribute('disabled')).to.equal('');
-  });
-
-  afterEach(() => {
-    fixtureCleanup();
   });
 });

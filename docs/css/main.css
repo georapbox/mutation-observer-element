@@ -1,13 +1,11 @@
-:root {
-  --body-max-width: 900px;
-
-  scroll-behavior: smooth;
-}
-
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 .noscript-banner {
@@ -23,8 +21,50 @@
   margin: 0 0 0.5rem 0;
 }
 
+.component-description p:last-child {
+  margin-bottom: 0;
+}
+
+.card {
+  background-color: var(--background-card);
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  margin-bottom: 0.5rem;
+}
+
+.card > button {
+  margin: 0;
+}
+
+.card > details {
+  margin-bottom: 0;
+}
+
+.card details summary {
+  font-weight: 500;
+}
+
+.back-top {
+  text-align: end;
+  font-size: 0.875rem;
+}
+
 .table-of-contents>li {
-  line-height: 1.6;
+  line-height: 1.7;
+}
+
+browser-window {
+  --bw-background: var(--background-alt);
+  display: block;
+}
+
+browser-window::part(base) {
+  border-radius: var(--border-radius);
+}
+
+browser-window::part(title) {
+  border-radius: var(--border-radius);
 }
 
 .btn-primary,
@@ -66,28 +106,11 @@ button[class^="btn"]:focus {
   box-shadow: none;
 }
 
-.alert {
-  position: relative;
-  padding: 16px;
-  margin-bottom: 8px;
-  border: 1px solid transparent;
-  border-top-color: transparent;
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  border-left-color: transparent;
-  border-radius: 6px;
-}
-
-.alert-info {
-  color: #055160;
-  background-color: #cff4fc;
-  border-color: #b6effb;
-}
-
 [contenteditable="true"] {
-  border-radius: 6px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border);
   padding: 10px;
-  background-color: var(--background);
+  background-color: var(--background-card);
   color: var(--form-text);
   transition: box-shadow 0.1s linear;
 }
@@ -116,17 +139,4 @@ button[class^="btn"]:focus {
   justify-content: center;
   align-items: center;
   border-radius: 4px;
-}
-
-.info-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: var(--border-radius);
-  background-color: var(--background);
-}
-
-.info-box svg {
-  min-width: 16px;
 }
