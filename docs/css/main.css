@@ -74,6 +74,22 @@ browser-window::part(title) {
   margin-bottom: 0.25rem;
 }
 
+.mutation-result {
+  margin: 1rem 0;
+  font-size: 0.875rem;
+}
+
+.mutation-result strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.mutation-result output {
+  display: block;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
 /* Example 1 - Attribute changes */
 #taskItem {
   display: flex;
@@ -148,4 +164,5 @@ browser-window::part(title) {
 
 #taskLabel {
   font-weight: 600;
+  overflow-wrap: anywhere;
 }

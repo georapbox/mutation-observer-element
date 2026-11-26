@@ -13,7 +13,19 @@
   <link rel="stylesheet" href="css/main.css">
   <script src="lib/highlight/highlight.min.js" defer></script>
   <script src="js/main.js" type="module"></script>
-  <script>document.addEventListener('DOMContentLoaded', () => window.hljs.highlightAll());</script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.hljs.highlightAll();
+
+      document.querySelectorAll('h3[id^="example-"]').forEach((el, index) => {
+        el.insertAdjacentHTML('afterbegin', `<a href="#${el.getAttribute('id')}">#</a> Example ${index + 1} - `);
+      });
+
+      document.querySelectorAll('.card').forEach(el => {
+        el.insertAdjacentHTML('afterend', `<div class="back-top"><a href="#">↑ Back to top</a></div>`);
+      });
+    });
+  </script>
 </head>
 <body>
   <noscript>
@@ -29,15 +41,10 @@
 
   <h2>Examples</h2>
 
-  <p>
-    The following examples demonstrate how to use the <code>&lt;mutation-observer&gt;</code>
-    custom element to observe changes to the DOM.
-  </p>
-
   <p class="console-notice">
-    <strong>Open your browser's developer console before trying the examples.</strong>
-    Each interaction logs a <code>mutation-observer-change</code> event
-    containing the observed mutation records.
+    <strong>Try the interactive examples below to observe DOM mutations.</strong>
+    Each example displays the latest observed change.
+    Open your browser's developer console to inspect the full <code>mutation-observer-change</code> events and their mutation records.
   </p>
 
   <details open>
@@ -68,6 +75,13 @@
           <span id="taskStatus">Pending</span>
         </div>
       </mutation-observer>
+
+      <div class="mutation-result">
+        <strong>Last mutation</strong>
+        <output id="mutationOutput1" aria-live="polite">
+          No mutations observed yet.
+        </output>
+      </div>
     </browser-window>
 
     <details>
@@ -95,7 +109,7 @@
   });
 
   mutationObserverEl.addEventListener('mutation-observer-change', evt => {
-    console.log('mutation-observer-change ->', evt.detail.mutations);
+    console.log('mutation-observer-change', evt.detail.mutations);
   });
 &lt;/script&gt;</code></pre>
     </details>
@@ -119,6 +133,13 @@
           <li>Update documentation</li>
         </ul>
       </mutation-observer>
+
+      <div class="mutation-result">
+        <strong>Last mutation</strong>
+        <output id="mutationOutput2" aria-live="polite">
+          No mutations observed yet.
+        </output>
+      </div>
     </browser-window>
 
     <details>
@@ -156,7 +177,7 @@
   });
 
   mutationObserverEl.addEventListener('mutation-observer-change', evt => {
-    console.log('mutation-observer-change ->', evt.detail.mutations);
+    console.log('mutation-observer-change', evt.detail.mutations);
   });
 &lt;/script&gt;</code></pre>
     </details>
@@ -178,6 +199,13 @@
       <mutation-observer id="mutationObserver3" char-data char-data-old-value>
         <p>Task preview: <span id="taskLabel">Review pull request</span></p>
       </mutation-observer>
+
+      <div class="mutation-result">
+        <strong>Last mutation</strong>
+        <output id="mutationOutput3" aria-live="polite">
+          No mutations observed yet.
+        </output>
+      </div>
     </browser-window>
 
     <details>
@@ -200,7 +228,7 @@
   });
 
   mutationObserverEl.addEventListener('mutation-observer-change', evt => {
-    console.log('mutation-observer-change ->', evt.detail.mutations);
+    console.log('mutation-observer-change', evt.detail.mutations);
   });
 &lt;/script&gt;</code></pre>
     </details>
@@ -211,17 +239,5 @@
   <p>
     <a href="https://github.com/georapbox/mutation-observer-element/blob/main/LICENSE" target="_blank" rel="noreferrer noopener">The MIT License (MIT)</a>
   </p>
-
-  <script>
-    document.querySelectorAll('button[data-open], button[command]').forEach(el => el.removeAttribute('disabled'));
-
-    document.querySelectorAll('h3[id^="example-"]').forEach((el, index) => {
-      el.insertAdjacentHTML('afterbegin', `<a href="#${el.getAttribute('id')}">#</a> Example ${index + 1} - `);
-    });
-
-    document.querySelectorAll('.card').forEach(el => {
-      el.insertAdjacentHTML('afterend', `<div class="back-top"><a href="#">↑ Back to top</a></div>`);
-    });
-  </script>
 </body>
 </html>
