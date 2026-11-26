@@ -39,6 +39,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Documentation**: Updated the README with registration options, package imports, and API details. Refreshed the interactive examples with improved navigation and collapsible code samples.
 - Updated development dependencies.
 
+### Fixed
+
+- Fixed an issue where changing observation-related attributes while the observer was paused could unintentionally restart mutation observation.
+
 ## [2.0.1] - 2024-08-23
 
 ### Added

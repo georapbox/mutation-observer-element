@@ -55,23 +55,21 @@ export class MutationObserverElement extends HTMLElement {
    * @param {string | null} newValue - The new value of the attribute.
    */
   attributeChangedCallback(name, oldValue, newValue) {
-    if (name === 'paused' && oldValue !== newValue && this.#connected) {
+    if (!this.#connected || oldValue === newValue) {
+      return;
+    }
+
+    if (name === 'paused') {
       this.paused ? this.#stopObserver() : this.#startObserver();
+      return;
     }
 
-    const shouldRestartObserver =
-      (name === 'attr' ||
-        name === 'attr-old-value' ||
-        name === 'char-data' ||
-        name === 'char-data-old-value' ||
-        name === 'child-list') &&
-      oldValue !== newValue &&
-      this.#connected;
-
-    if (shouldRestartObserver) {
-      this.#stopObserver();
-      this.#startObserver();
+    if (this.paused) {
+      return;
     }
+
+    this.#stopObserver();
+    this.#startObserver();
   }
 
   /**
