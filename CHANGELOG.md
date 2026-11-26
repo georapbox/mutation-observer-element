@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Custom Element Registration Options**: Added support for custom tag name prefixes and custom element registries, including scoped registries, through the static `define()` method.
 - **Custom Elements Manifest**: Added support for generating a Custom Elements Manifest using `@custom-elements-manifest/analyzer`, including an `analyze` script and `customElements` package metadata.
 - **Documentation Deployment**: Added scripts for building and deploying the documentation to GitHub Pages.
-- **Pre-commit Hook**: Added a Git hook to run linting and formatting checks before commits.
+- **Development Workflow**: Added a pre-commit hook to run linting and formatting checks before commits.
 
 ### Changed
 
