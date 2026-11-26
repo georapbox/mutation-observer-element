@@ -185,7 +185,7 @@ export class MutationObserverElement extends HTMLElement {
     this.#connected = true;
 
     if (typeof MutationObserver === 'function') {
-      this.#mutationObserver = new MutationObserver(this.#handleMutation);
+      this.#mutationObserver ??= new MutationObserver(this.#handleMutation);
 
       if (!this.paused) {
         this.#startObserver();
