@@ -46,12 +46,12 @@ If you don't need control over registration, import the convenience entry point:
 import '@georapbox/mutation-observer-element/define';
 ```
 
-This automatically registers `<mutation-observerr>` with its default name.
+This automatically registers `<mutation-observer>` with its default name.
 
 You can also import the `MutationObserverElement` class from this entry point:
 
 ```js
-import { MutationObserverElement } from '@georapbox/mutation-observer/define';
+import { MutationObserverElement } from '@georapbox/mutation-observer-element/define';
 ```
 
 There is no need to call `MutationObserverElement.define()` when using this entry point.
@@ -117,20 +117,25 @@ Once registered, use the custom element in your HTML:
 | Property | Attribute | Type | Default | Reflects | Description |
 | -------- | --------- | ---- | ------- | -------- | ----------- |
 | `attr` | `attr` | string | `""` | Yes | Specifies a space-separated list of attribute names to observe. Use "*" to observe all attributes. |
-| `attrOldValue` | `attr-old-value` | boolean | `false` | Yes | Records the previous values of observed attributes when enabled. |
+| `attrOldValue` | `attr-old-value` | boolean | `false` | Yes | Records the previous values of observed attributes when enabled. Has no effect unless `attr` is configured. |
 | `charData` | `char-data` | boolean | `false` | Yes | Observes changes to character data, such as text content, when enabled. |
-| `charDataOldValue` | `char-data-old-value` | boolean | `false` | Yes | Records the previous values of observed character data when enabled. |
+| `charDataOldValue` | `char-data-old-value` | boolean | `false` | Yes | Records the previous values of observed character data when enabled. Has no effect unless `char-data` is enabled. |
 | `childList` | `child-list` | boolean | `false` | Yes | Observes additions and removals of child nodes when enabled. |
-| `paused` | `paused` | boolean | `false` | Yes | Pauses mutation observation when enabled. |
+| `paused` | `paused` | boolean | `false` | Yes | Pauses observation when enabled. Removing the attribute or setting the property to false resumes observation. |
 
 > [!NOTE]
-> From the properties above, at least one of `attr`, `child-list` or `char-data` must be present, otherwise, no changes are monitored and no mutation events are emitted.
+> At least one observation type must be enabled for mutations to be monitored.
+> This requires a non-empty `attr` value, the `child-list` attribute, or the
+> `char-data` attribute. Otherwise, the observer remains idle.
+>
+> The `attr-old-value` and `char-data-old-value` attributes have no effect
+> unless their corresponding observation types are enabled.
 
 ### Slots
 
 | Name | Description |
 | ---- | ----------- |
-| (default) | Contains the target nodes to observe for mutations. |
+| (default) | The nodes to observe for mutations. |
 
 ### Methods
 
@@ -142,7 +147,7 @@ Once registered, use the custom element in your HTML:
 
 | Name | Type | Description | Event Detail |
 | ---- | ---- | ----------- | ------------ |
-| `mutation-observer-change` | CustomEvent | Dispatched when the element is mutated. | `{ mutations: MutationRecord[]` |
+| `mutation-observer-change` | CustomEvent | Dispatched when the `MutationObserver` reports mutations. | `{ mutations: MutationRecord[] }` |
 
 ## Changelog
 
@@ -152,7 +157,7 @@ For API updates and breaking changes, check the [CHANGELOG][changelog].
 
 ### Prerequisites
 
-The project requires `Node.js` and `npm` to be installed on your environment. Preferrably, use [nvm](https://github.com/nvm-sh/nvm) Node Version Manager and use the version of Node.js specified in the `.nvmrc` file by running `nvm use`.
+The project requires `Node.js` and `npm` to be installed in your environment. Preferably, use [nvm](https://github.com/nvm-sh/nvm) Node Version Manager and use the version of Node.js specified in the `.nvmrc` file by running `nvm use`.
 
 ### Install dependencies
 

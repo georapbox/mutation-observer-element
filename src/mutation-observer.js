@@ -14,21 +14,18 @@ template.innerHTML = /* html */ `
 `;
 
 /**
- * A custom element that offers a declarative interface to the MutationObserver API.
+ * A custom element that provides a declarative interface to the MutationObserver API.
  *
  * @documentation https://github.com/georapbox/mutation-observer-element
  *
  * @tagname mutation-observer
  * @extends HTMLElement
  *
- * @slot - Contains the target nodes to observe for mutations.
+ * @slot - The nodes to observe for mutations.
  *
- * @event mutation-observer-change - Dispatched when a mutation is observed.
+ * @event mutation-observer-change - Dispatched when the MutationObserver reports mutations.
  */
 export class MutationObserverElement extends HTMLElement {
-  /** @type {boolean} */
-  #connected = false;
-
   /** @type {MutationObserver | null} */
   #mutationObserver = null;
 
@@ -55,7 +52,13 @@ export class MutationObserverElement extends HTMLElement {
    * @param {string | null} newValue - The new value of the attribute.
    */
   attributeChangedCallback(name, oldValue, newValue) {
-    if (!this.#connected || oldValue === newValue) {
+    if (!this.#mutationObserver) {
+      return;
+    }
+
+    const hasChanged = name === 'attr' ? oldValue !== newValue : (oldValue === null) !== (newValue === null);
+
+    if (!hasChanged) {
       return;
     }
 
@@ -64,12 +67,9 @@ export class MutationObserverElement extends HTMLElement {
       return;
     }
 
-    if (this.paused) {
-      return;
+    if (!this.paused) {
+      this.#startObserver();
     }
-
-    this.#stopObserver();
-    this.#startObserver();
   }
 
   /**
@@ -91,6 +91,7 @@ export class MutationObserverElement extends HTMLElement {
 
   /**
    * Records the previous values of observed attributes when enabled.
+   * Has no effect unless `attr` is configured.
    *
    * @type {boolean}
    * @attribute attr-old-value
@@ -123,6 +124,7 @@ export class MutationObserverElement extends HTMLElement {
 
   /**
    * Records the previous values of observed character data when enabled.
+   * Has no effect unless `char-data` is enabled.
    *
    * @type {boolean}
    * @attribute char-data-old-value
@@ -154,7 +156,8 @@ export class MutationObserverElement extends HTMLElement {
   }
 
   /**
-   * Pauses mutation observation when enabled.
+   * Pauses observation when enabled.
+   * Removing the attribute or setting the property to false resumes observation.
    *
    * @type {boolean}
    * @attribute paused
@@ -173,6 +176,10 @@ export class MutationObserverElement extends HTMLElement {
    * Lifecycle method that is called when the element is added to the DOM.
    */
   connectedCallback() {
+    if (!this.isConnected) {
+      return;
+    }
+
     this.#upgradeProperty('attr');
     this.#upgradeProperty('attrOldValue');
     this.#upgradeProperty('charData');
@@ -180,10 +187,8 @@ export class MutationObserverElement extends HTMLElement {
     this.#upgradeProperty('childList');
     this.#upgradeProperty('paused');
 
-    this.#connected = true;
-
     if (typeof MutationObserver === 'function') {
-      this.#mutationObserver ??= new MutationObserver(this.#handleMutation);
+      this.#mutationObserver = new MutationObserver(this.#handleMutation);
 
       if (!this.paused) {
         this.#startObserver();
@@ -195,8 +200,8 @@ export class MutationObserverElement extends HTMLElement {
    * Lifecycle method that is called when the element is removed from the DOM.
    */
   disconnectedCallback() {
-    this.#connected = false;
     this.#stopObserver();
+    this.#mutationObserver = null;
   }
 
   /**
@@ -215,35 +220,38 @@ export class MutationObserverElement extends HTMLElement {
       return;
     }
 
-    const hasObservedAttributes = typeof this.attr === 'string' && this.attr.length > 0;
+    const attr = this.attr.trim();
+    const attributes = attr.length > 0;
+    const characterData = this.charData;
+    const childList = this.childList;
 
-    try {
-      this.#mutationObserver.observe(this, {
-        subtree: true,
-        attributes: hasObservedAttributes,
-        attributeOldValue: this.attrOldValue,
-        attributeFilter: hasObservedAttributes && this.attr !== '*' ? this.attr.split(' ') : void 0,
-        childList: this.childList,
-        characterData: this.charData,
-        characterDataOldValue: this.charDataOldValue
-      });
-    } catch {
-      // Suppress any errors thrown if any of the required attributes
-      // `attr`, `child-list`, `char-data` are missing.
+    if (!attributes && !characterData && !childList) {
+      this.#stopObserver();
+      return;
     }
+
+    this.#mutationObserver.observe(this, {
+      subtree: true,
+      attributes,
+      attributeOldValue: attributes && this.attrOldValue,
+      attributeFilter: attributes && attr !== '*' ? attr.split(/\s+/) : undefined,
+      childList,
+      characterData,
+      characterDataOldValue: characterData && this.charDataOldValue
+    });
   }
 
   /**
    * Stops observing the element for mutations.
    */
   #stopObserver() {
-    this.#mutationObserver && this.#mutationObserver.disconnect();
+    this.#mutationObserver?.disconnect();
   }
 
   /**
-   * Handles mutations observed by the MutationObserver.
+   * Dispatches a custom event with the reported mutation records.
    *
-   * @param {MutationRecord[]} mutations - The observed mutations.
+   * @param {MutationRecord[]} mutations - The reported mutation records.
    */
   #handleMutation = mutations => {
     this.#emit('mutation-observer-change', { mutations });
@@ -275,7 +283,7 @@ export class MutationObserverElement extends HTMLElement {
    *
    * @see https://web.dev/articles/custom-elements-best-practices#make_properties_lazy
    *
-   * @param { 'attr' | 'attrOldValue' | 'charData' | 'charDataOldValue' | 'childList' | 'paused'} prop - The property name to upgrade.
+   * @param {'attr' | 'attrOldValue' | 'charData' | 'charDataOldValue' | 'childList' | 'paused'} prop - The property name to upgrade.
    */
   #upgradeProperty(prop) {
     const instance = /** @type {HTMLElement & Record<string, unknown>} */ (this);
