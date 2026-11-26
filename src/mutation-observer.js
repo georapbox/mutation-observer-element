@@ -202,6 +202,14 @@ export class MutationObserverElement extends HTMLElement {
   }
 
   /**
+   * Lifecycle method that is called when the element is moved to a different
+   * place in the DOM via `Element.moveBefore()`.
+   *
+   * Preserves the active MutationObserver during state-preserving moves.
+   */
+  connectedMoveCallback() {}
+
+  /**
    * Starts observing the element for mutations.
    */
   #startObserver() {
