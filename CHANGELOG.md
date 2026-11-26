@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Action Required**: Update event listeners to use the new event name.
 - **Event Payload Changes**: Renamed `mutationList` to `mutations` in the event's `detail` object. The `mutations` property continues to contain an array of `MutationRecord` objects.
   - **Action Required**: Replace `event.detail.mutationList` with `event.detail.mutations`.
+- **Property and Attribute Renaming**: Renamed the `disabled` property and attribute to `paused` to better reflect their purpose.
+  - **Action Required**: Replace `disabled` with `paused` in both HTML attributes and JavaScript property access. The behavior remains unchanged: setting `paused` to `true` stops mutation observation, while setting it to `false` resumes it.
 - **Node.js Requirements**: Updated the declared engine requirements to Node.js 24 or later and npm 11.17.0 or later.
 
 ### Added

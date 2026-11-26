@@ -121,7 +121,7 @@ Once registered, use the custom element in your HTML:
 | `charData` | `char-data` | boolean | `false` | Yes | Observes changes to character data, such as text content, when enabled. |
 | `charDataOldValue` | `char-data-old-value` | boolean | `false` | Yes | Records the previous values of observed character data when enabled. |
 | `childList` | `child-list` | boolean | `false` | Yes | Observes additions and removals of child nodes when enabled. |
-| `disabled` | `disabled` | boolean | `false` | Yes | Disables mutation observation when enabled. |
+| `paused` | `paused` | boolean | `false` | Yes | Pauses mutation observation when enabled. |
 
 > [!NOTE]
 > From the properties above, at least one of `attr`, `child-list` or `char-data` must be present, otherwise, no changes are monitored and no mutation events are emitted.

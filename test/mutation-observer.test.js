@@ -48,8 +48,8 @@ describe('mutation-observer', () => {
       expect(el.hasAttribute('char-data')).to.be.false;
       expect(el.charDataOldValue).to.be.false;
       expect(el.hasAttribute('char-data-old-value')).to.be.false;
-      expect(el.disabled).to.be.false;
-      expect(el.hasAttribute('disabled')).to.be.false;
+      expect(el.paused).to.be.false;
+      expect(el.hasAttribute('paused')).to.be.false;
     });
 
     // attr
@@ -145,23 +145,23 @@ describe('mutation-observer', () => {
       expect(el.hasAttribute('char-data-old-value')).to.be.false;
     });
 
-    // disabled
-    it('reflects attribute "disabled" to property "disabled"', async () => {
+    // paused
+    it('reflects attribute "paused" to property "paused"', async () => {
       const el = await fixture(html`<mutation-observer></mutation-observer>`);
 
-      el.setAttribute('disabled', '');
+      el.setAttribute('paused', '');
 
-      expect(el.disabled).to.be.true;
+      expect(el.paused).to.be.true;
     });
 
-    it('reflects property "disabled" to attribute "disabled"', async () => {
+    it('reflects property "paused" to attribute "paused"', async () => {
       const el = await fixture(html`<mutation-observer></mutation-observer>`);
 
-      el.disabled = true;
-      expect(el.hasAttribute('disabled')).to.be.true;
+      el.paused = true;
+      expect(el.hasAttribute('paused')).to.be.true;
 
-      el.disabled = false;
-      expect(el.hasAttribute('disabled')).to.be.false;
+      el.paused = false;
+      expect(el.hasAttribute('paused')).to.be.false;
     });
   });
 
@@ -381,9 +381,9 @@ describe('mutation-observer', () => {
       expect(spy.calledOnce).to.be.true;
     });
 
-    it('should stop and resume observing when "disabled" changes', async () => {
+    it('should stop and resume observing when "paused" changes', async () => {
       const el = await fixture(html`
-        <mutation-observer attr="class" disabled>
+        <mutation-observer attr="class" paused>
           <button type="button">Click me</button>
         </mutation-observer>
       `);
@@ -391,18 +391,18 @@ describe('mutation-observer', () => {
       const spy = sinon.spy();
       el.addEventListener('mutation-observer-change', spy);
 
-      button.className = 'while-disabled';
+      button.className = 'while-paused';
       await aTimeout(0);
       expect(spy.called).to.be.false;
 
-      el.disabled = false;
+      el.paused = false;
       const listener = oneEvent(el, 'mutation-observer-change');
       button.className = 'while-enabled';
       await listener;
       expect(spy.calledOnce).to.be.true;
 
-      el.disabled = true;
-      button.className = 'disabled-again';
+      el.paused = true;
+      button.className = 'paused-again';
       await aTimeout(0);
       expect(spy.calledOnce).to.be.true;
     });

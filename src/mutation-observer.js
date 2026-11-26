@@ -44,7 +44,7 @@ export class MutationObserverElement extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['attr', 'attr-old-value', 'char-data', 'char-data-old-value', 'child-list', 'disabled'];
+    return ['attr', 'attr-old-value', 'char-data', 'char-data-old-value', 'child-list', 'paused'];
   }
 
   /**
@@ -55,8 +55,8 @@ export class MutationObserverElement extends HTMLElement {
    * @param {string | null} newValue - The new value of the attribute.
    */
   attributeChangedCallback(name, oldValue, newValue) {
-    if (name === 'disabled' && oldValue !== newValue && this.#connected) {
-      this.disabled ? this.#stopObserver() : this.#startObserver();
+    if (name === 'paused' && oldValue !== newValue && this.#connected) {
+      this.paused ? this.#stopObserver() : this.#startObserver();
     }
 
     const shouldRestartObserver =
@@ -156,19 +156,19 @@ export class MutationObserverElement extends HTMLElement {
   }
 
   /**
-   * Disables mutation observation when enabled.
+   * Pauses mutation observation when enabled.
    *
    * @type {boolean}
-   * @attribute disabled
+   * @attribute paused
    * @reflect
    * @default false
    */
-  get disabled() {
-    return this.hasAttribute('disabled');
+  get paused() {
+    return this.hasAttribute('paused');
   }
 
-  set disabled(value) {
-    this.toggleAttribute('disabled', !!value);
+  set paused(value) {
+    this.toggleAttribute('paused', !!value);
   }
 
   /**
@@ -180,14 +180,14 @@ export class MutationObserverElement extends HTMLElement {
     this.#upgradeProperty('charData');
     this.#upgradeProperty('charDataOldValue');
     this.#upgradeProperty('childList');
-    this.#upgradeProperty('disabled');
+    this.#upgradeProperty('paused');
 
     this.#connected = true;
 
     if (typeof MutationObserver === 'function') {
       this.#mutationObserver = new MutationObserver(this.#handleMutation);
 
-      if (!this.disabled) {
+      if (!this.paused) {
         this.#startObserver();
       }
     }
@@ -277,7 +277,7 @@ export class MutationObserverElement extends HTMLElement {
    *
    * @see https://web.dev/articles/custom-elements-best-practices#make_properties_lazy
    *
-   * @param { 'attr' | 'attrOldValue' | 'charData' | 'charDataOldValue' | 'childList' | 'disabled'} prop - The property name to upgrade.
+   * @param { 'attr' | 'attrOldValue' | 'charData' | 'charDataOldValue' | 'childList' | 'paused'} prop - The property name to upgrade.
    */
   #upgradeProperty(prop) {
     const instance = /** @type {HTMLElement & Record<string, unknown>} */ (this);
