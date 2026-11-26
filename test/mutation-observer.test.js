@@ -432,5 +432,82 @@ describe('mutation-observer', () => {
 
       expect(spy.calledOnce).to.be.true;
     });
+
+    it('preserves observation during state-preserving moves', async function () {
+      if (typeof Element.prototype.moveBefore !== 'function') {
+        this.skip();
+        return;
+      }
+
+      const container = await fixture(html`
+        <div>
+          <div class="first">
+            <mutation-observer child-list></mutation-observer>
+          </div>
+          <div class="second"></div>
+        </div>
+      `);
+
+      const el = container.querySelector('mutation-observer');
+      const destination = container.querySelector('.second');
+
+      const disconnect = sinon.spy(MutationObserver.prototype, 'disconnect');
+      const observe = sinon.spy(MutationObserver.prototype, 'observe');
+
+      destination.moveBefore(el, null);
+
+      expect(el.parentElement).to.equal(destination);
+
+      sinon.assert.notCalled(disconnect);
+      sinon.assert.notCalled(observe);
+
+      const event = oneEvent(el, 'mutation-observer-change');
+      const child = document.createElement('div');
+
+      el.appendChild(child);
+
+      const { detail } = await event;
+
+      expect(detail.mutations).to.have.lengthOf(1);
+      expect(detail.mutations[0]).to.be.instanceOf(MutationRecord);
+      expect(detail.mutations[0].type).to.equal('childList');
+      expect(detail.mutations[0].addedNodes[0]).to.equal(child);
+    });
+
+    it('preserves pending mutation records during state-preserving moves', async function () {
+      if (typeof Element.prototype.moveBefore !== 'function') {
+        this.skip();
+        return;
+      }
+
+      const container = await fixture(html`
+        <div>
+          <div class="first">
+            <mutation-observer child-list></mutation-observer>
+          </div>
+          <div class="second"></div>
+        </div>
+      `);
+
+      const el = container.querySelector('mutation-observer');
+      const destination = container.querySelector('.second');
+
+      const firstChild = document.createElement('div');
+      const secondChild = document.createElement('div');
+
+      const event = oneEvent(el, 'mutation-observer-change');
+
+      el.appendChild(firstChild);
+
+      destination.moveBefore(el, null);
+
+      el.appendChild(secondChild);
+
+      const { detail } = await event;
+
+      expect(detail.mutations).to.have.lengthOf(2);
+      expect(detail.mutations[0].addedNodes[0]).to.equal(firstChild);
+      expect(detail.mutations[1].addedNodes[0]).to.equal(secondChild);
+    });
   });
 });
