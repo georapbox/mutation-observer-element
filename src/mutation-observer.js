@@ -213,7 +213,8 @@ export class MutationObserverElement extends HTMLElement {
   connectedMoveCallback() {}
 
   /**
-   * Starts observing the element for mutations.
+   * Starts mutation observation or updates the existing observation configuration.
+   * Stops observation if no observation types are enabled.
    */
   #startObserver() {
     if (!this.#mutationObserver) {
