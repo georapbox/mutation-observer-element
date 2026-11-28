@@ -2,8 +2,8 @@
 [![npm license](https://img.shields.io/npm/l/@georapbox/mutation-observer-element.svg)](https://www.npmjs.com/package/@georapbox/mutation-observer-element)
 
 [demo]: https://georapbox.github.io/mutation-observer-element/
-[license]: https://github.com/georapbox/mutation-observer-element/blob/main/LICENSE
-[changelog]: https://github.com/georapbox/mutation-observer-element/blob/main/CHANGELOG.md
+[license]: ./LICENSE
+[changelog]: ./CHANGELOG.md
 
 # &lt;mutation-observer&gt;
 
@@ -13,20 +13,15 @@ A custom element that offers a declarative interface to the [MutationObserver AP
 
 ## Installation
 
-Install the package using npm:
-
 ```sh
 npm install @georapbox/mutation-observer-element
 ```
 
 ## Registration
 
-By default, the package exports the element class without registering it.
-This lets the application decide when the custom element is defined.
+The package exports the element class without registering it by default.
 
 ### Manual registration
-
-Import the `MutationObserverElement` class and call its static `define()` method:
 
 ```js
 import { MutationObserverElement } from '@georapbox/mutation-observer-element';
@@ -34,65 +29,31 @@ import { MutationObserverElement } from '@georapbox/mutation-observer-element';
 MutationObserverElement.define();
 ```
 
-This registers `<mutation-observer>` in the global `customElements` registry.
+The element is registered only if its tag name is not already defined in the specified registry.
 
-You only need to call `MutationObserverElement.define()` once. Subsequent calls are ignored if the tag name is already registered.
+#### Registration options
+
+The static `define()` method accepts an optional configuration object:
+
+| Option | Type | Default | Description |
+| ------ | ---- | ------- | ----------- |
+| `prefix` | string | `""` | Prefix to prepend to the default tag name. |
+| `registry` | CustomElementRegistry | `globalThis.customElements` | The registry in which to define the element. |
+
+Alternatively, to register the element with a custom tag name prefix:
+
+```js
+MutationObserverElement.define({ prefix: 'my' });
+// Registers <my-mutation-observer>
+```
 
 ### Automatic registration
 
-If you don't need control over registration, import the convenience entry point:
+Import the `/define` entry point to automatically register the element with its default tag name.
 
 ```js
 import '@georapbox/mutation-observer-element/define';
 ```
-
-This automatically registers `<mutation-observer>` with its default name.
-
-You can also import the `MutationObserverElement` class from this entry point:
-
-```js
-import { MutationObserverElement } from '@georapbox/mutation-observer-element/define';
-```
-
-There is no need to call `MutationObserverElement.define()` when using this entry point.
-
-### Custom element names
-
-You can provide a `prefix` to register the element under a different name:
-
-```js
-import { MutationObserverElement } from '@georapbox/mutation-observer-element';
-
-MutationObserverElement.define({ prefix: 'my' });
-```
-
-This registers `<my-mutation-observer>` instead of `<mutation-observer>`.
-
-You must use the prefixed name in your HTML:
-
-```html
-<my-mutation-observer></my-mutation-observer>
-```
-
-> [!NOTE]
-> A custom element constructor can only be registered under one name within the same registry. Choose either the default name or a custom prefix for a given registry.
-
-### Custom element registry
-
-You can specify a custom element registry using the `registry` option:
-
-```js
-import { MutationObserverElement } from '@georapbox/mutation-observer-element';
-
-const registry = new CustomElementRegistry();
-
-MutationObserverElement.define({ registry });
-```
-
-By default, the global `customElements` registry is used. You can also provide a [scoped custom element registry](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#scoped_custom_element_registries) to register the elements within a specific scope.
-
-> [!NOTE]
-> Scoped registries must be associated with a DOM scope before their registered elements can be used. Check browser compatibility if you need to support older browsers.
 
 ## Usage
 
@@ -106,7 +67,7 @@ Once registered, use the custom element in your HTML:
   char-data-old-value
   child-list
 >
-  <button class="btn-primary">Click to mutate me</button>
+  <div>Observed element</div>
 </mutation-observer>
 ```
 
@@ -125,8 +86,9 @@ Once registered, use the custom element in your HTML:
 
 > [!NOTE]
 > At least one observation type must be enabled for mutations to be monitored.
-> This requires a non-empty `attr` value, the `child-list` attribute, or the
-> `char-data` attribute. Otherwise, the observer remains idle.
+> This requires a non-empty `attr` value (after trimming whitespace), the
+> `child-list` attribute, or the `char-data` attribute. Otherwise, the observer
+> remains idle.
 >
 > The `attr-old-value` and `char-data-old-value` attributes have no effect
 > unless their corresponding observation types are enabled.
@@ -185,7 +147,13 @@ npm run lint
 
 ### Testing
 
-Run the tests by running any of the following commands.
+The tests use Playwright to run in real browsers. Install the required browser binaries if they are not already installed:
+
+```sh
+npx playwright install
+```
+
+Run the tests using any of the following commands:
 
 ```sh
 npm test

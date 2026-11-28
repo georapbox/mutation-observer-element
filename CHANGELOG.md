@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-11-28
+
 ### Breaking Changes
 
 - **Explicit Package Exports**: Added a formal `exports` map to `package.json`.
@@ -24,14 +26,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Automatic Registration**: Added a `/define` entry point that automatically registers the custom element using its default tag name.
+- **Automatic Registration Entry Point**: Added a `/define` package entry point that automatically registers the custom element using its default tag name.
 - **Custom Element Registration Options**: Added support for custom tag name prefixes and custom element registries, including scoped registries, through the static `define()` method.
+- **State-Preserving Moves**: Added support for the `connectedMoveCallback()` lifecycle method, preserving the existing observer during state-preserving moves using `Element.moveBefore()`.
 - **Custom Elements Manifest**: Added support for generating a Custom Elements Manifest using `@custom-elements-manifest/analyzer`, including an `analyze` script and `customElements` package metadata.
 - **Documentation Deployment**: Added scripts for building and deploying the documentation to GitHub Pages.
 - **Development Workflow**: Added a pre-commit hook to run linting and formatting checks before commits.
 
 ### Changed
 
+- **Observer Lifecycle**: Refactored observer initialization and cleanup to follow the custom element's connection lifecycle. The observer instance is created on connection, retained while observation is paused, and released on disconnection.
+- **Boolean Attribute Handling**: Updated boolean attribute change handling to react only to changes in attribute presence, avoiding unnecessary observer reconfiguration when attribute values change.
+- **Observation Configuration**: Normalized observation options so that `attr-old-value` and `char-data-old-value` have no effect unless their corresponding observation types are enabled. Explicitly handle configurations with no enabled observation types and remove the generic error suppression around observer initialization.
+- **Attribute Filtering**: Improved parsing of the `attr` value to support leading, trailing, and multiple whitespace characters.
+- **Observer Reconfiguration**: Updated active observation options without disconnecting the observer, preserving pending mutation records when the configuration changes.
 - **Build Process**: Updated the build process to reuse the main module in the auto-defined entry point instead of creating a separate bundle.
 - **Custom Event Dispatching**: Introduced a shared internal event dispatching method for consistent event creation and configuration.
 - **TypeScript Support**: Refined JSDoc annotations and type definitions for improved tooling and editor support.
@@ -42,6 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed an issue where changing observation-related attributes while the observer was paused could unintentionally restart mutation observation.
+- Fixed an issue where enabling `attr-old-value` or `char-data-old-value` without their corresponding observation types could prevent other valid observation types from working.
+- Prevented observer initialization when a queued `connectedCallback()` is executed after the element has already been disconnected.
 
 ## [2.0.1] - 2024-08-23
 
@@ -80,5 +90,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release.
 
-[unreleased]: https://github.com/georapbox/mutation-observer-element/compare/v2.0.1...HEAD
+[unreleased]: https://github.com/georapbox/mutation-observer-element/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/georapbox/mutation-observer-element/compare/v2.0.1...v3.0.0
 [2.0.1]: https://github.com/georapbox/mutation-observer-element/releases/tag/v2.0.1

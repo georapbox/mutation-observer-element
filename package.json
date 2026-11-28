@@ -40,7 +40,8 @@
     "types": "tsc --project tsconfig.json",
     "analyze": "custom-elements-manifest analyze",
     "clean": "rimraf dist",
-    "prepublishOnly": "npm-run-all clean lint test build types analyze"
+    "prepack": "npm-run-all build types analyze",
+    "prepublishOnly": "npm-run-all lint format:check test"
   },
   "keywords": [
     "custom-elements",
@@ -90,7 +91,6 @@
   },
   "allowScripts": {
     "fsevents@2.3.3": true,
-    "playwright@1.28.0": true,
     "esbuild@0.28.2": true,
     "rs-module-lexer@2.9.0": true
   }
