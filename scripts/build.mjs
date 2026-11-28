@@ -1,10 +1,8 @@
-import fs from 'fs/promises';
+import { copyFile, readFile } from 'node:fs/promises';
 import * as esbuild from 'esbuild';
 
-const PACKAGE_NAME = 'mutation-observer';
-
 const readPkg = async () => {
-  return JSON.parse(await fs.readFile(new URL('../package.json', import.meta.url)));
+  return JSON.parse(await readFile(new URL('../package.json', import.meta.url)));
 };
 
 const pkg = await readPkg();
@@ -20,7 +18,7 @@ const makeBanner = pkg => `/*!
  */`;
 
 await esbuild.build({
-  entryPoints: [`src/${PACKAGE_NAME}.js`, `src/${PACKAGE_NAME}-defined.js`],
+  entryPoints: ['src/mutation-observer.js'],
   bundle: true,
   minify: true,
   sourcemap: true,
@@ -30,3 +28,5 @@ await esbuild.build({
     js: makeBanner(pkg)
   }
 });
+
+await copyFile('src/mutation-observer-defined.js', 'dist/mutation-observer-defined.js');

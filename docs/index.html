@@ -5,158 +5,234 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>&lt;mutation-observer&gt;</title>
-  <meta name="description" content="A custom element that offers a declarative interface to the MutationObserver API.">
+  <meta name="description" content="A custom element that provides a declarative interface to the MutationObserver API.">
   <meta name="color-scheme" content="light dark">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="stylesheet" href="lib/highlight/highlight-github.css">
   <link rel="stylesheet" href="css/water.css">
   <link rel="stylesheet" href="css/main.css">
-  <script src="js/main.js" type="module"></script>
   <script src="lib/highlight/highlight.min.js" defer></script>
+  <script src="js/main.js" type="module"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.hljs.highlightAll();
+
+      document.querySelectorAll('h3[id^="example-"]').forEach((el, index) => {
+        el.insertAdjacentHTML('afterbegin', `<a href="#${el.getAttribute('id')}">#</a> Example ${index + 1} - `);
+      });
+
+      document.querySelectorAll('.card').forEach(el => {
+        el.insertAdjacentHTML('afterend', `<div class="back-top"><a href="#">↑ Back to top</a></div>`);
+      });
+    });
+  </script>
 </head>
 <body>
   <noscript>
-    <div class="noscript-banner">
-      This page requires JavaScript to work properly.
-      Please enable JavaScript in your browser settings.
-    </div>
+    <div class="noscript-banner">This demo requires JavaScript to work.</div>
   </noscript>
 
   <h1>&lt;mutation-observer&gt;</h1>
 
   <div class="component-description">
-    <p>A custom element that offers a declarative interface to the <a href="https://developer.mozilla.org/docs/Web/API/MutationObserver" target="_blank" rel="noreferrer noopener">MutationObserver API</a>.</p>
+    <p>A custom element that provides a declarative interface to the <a href="https://developer.mozilla.org/docs/Web/API/MutationObserver" target="_blank" rel="noreferrer noopener">MutationObserver API</a>.</p>
     <p><a href="https://github.com/georapbox/mutation-observer-element" target="_blank" rel="noreferrer noopener">Source code & documentation</a></p>
   </div>
 
   <h2>Examples</h2>
 
-  <p>
-    The following examples demonstrate how to use the <code>&lt;mutation-observer&gt;</code> custom element to observe changes to the DOM.
+  <p class="console-notice">
+    <strong>Try the interactive examples below to observe DOM mutations.</strong>
+    Each example displays the latest observed change.
+    Open your browser's developer console to inspect the full <code>mutation-observer-change</code> events and their mutation records.
   </p>
 
-  <ol class="table-of-contents">
-    <li><a href="#example-attr">Observing attributes changes</a></li>
-    <li><a href="#example-child-list">Observing addition of new child nodes or removal of existing child nodes</a></li>
-    <li><a href="#example-char-data">Observing changes to the character data contained within the node</a></li>
-  </ol>
-
-  <div class="info-box">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="var(--links)" class="bi bi-terminal" viewBox="0 0 16 16">
-      <path d="M6 9a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3A.5.5 0 0 1 6 9M3.854 4.146a.5.5 0 1 0-.708.708L4.793 6.5 3.146 8.146a.5.5 0 1 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2z"></path>
-      <path d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"></path>
-    </svg>
-    <small><em>Open the browser's console to watch emitted events.</em></small>
-  </div>
+  <details open>
+    <summary>Table of contents</summary>
+    <ol class="table-of-contents">
+      <li><a href="#example-attr">Attribute changes</a></li>
+      <li><a href="#example-child-list">Child node changes</a></li>
+      <li><a href="#example-char-data">Character data changes</a></li>
+    </ol>
+  </details>
 
   <!-- Example 1 -->
-  <h3 id="example-attr"><a href="#example-attr">#</a> Example 1</h3>
-  <p>Observing attributes changes: <code>class</code></p>
+  <h3 id="example-attr">Attribute changes</h3>
 
-  <mutation-observer id="mutationObserver1" attr="class" attr-old-value>
-    <button type="button" class="btn-primary">Click to mutate me</button>
-  </mutation-observer>
+  <p>
+    Mark the task as completed or incomplete to observe changes to its
+    <code>class</code> attribute, including the previous value.
+  </p>
 
-  <details open>
-    <summary>Source code</summary>
+  <div class="card">
+    <browser-window url="https://github.com/georapbox/mutation-observer-element" icon>
+      <mutation-observer id="mutationObserver1" attr="class" attr-old-value>
+        <div id="taskItem" class="task">
+          <label>
+            <input type="checkbox" id="taskCheckbox">
+            Review pull request
+          </label>
+          <span id="taskStatus">Pending</span>
+        </div>
+      </mutation-observer>
+
+      <div class="mutation-result">
+        <strong>Last mutation</strong>
+        <output id="mutationOutput1" aria-live="polite">
+          No mutations observed yet.
+        </output>
+      </div>
+    </browser-window>
+
+    <details>
+      <summary>Code sample</summary>
 
 <pre><code class="language-html">&lt;mutation-observer attr="class" attr-old-value&gt;
-  &lt;button class="btn-primary"&gt;
-    Click to mutate me
-  &lt;/button&gt;
-&lt;/mutation-observer&gt;
-
-&lt;script&gt;
-  const mutationObserverEl = document.querySlector('mutation-observer');
-  const button = mutationObserverEl.querySelector('button');
-  const classNames = ['primary', 'secondary', 'success', 'danger', 'warning', 'info'];
-  let count = 0;
-
-  button.addEventListener('click', evt => {
-    count += 1;
-    evt.target.className = `btn-${classNames[count % classNames.length]}`;
-  });
-
-  mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
-    console.log('mutation-observer:mutate ->', evt.detail);
-  });
-&lt;/script&gt;</code></pre>
-  </details>
-
-  <!-- Example 2 -->
-  <h3 id="example-child-list"><a href="#example-child-list">#</a> Example 2</h3>
-  <p>Observing addition of new child nodes or removal of existing child nodes</p>
-
-  <button type="button" id="addButton">Add element</button>
-  <button type="button" id="removeButton">Remove element</button>
-
-  <mutation-observer id="mutationObserver2" child-list>
-    <div id="elementsContainer"></div>
-  </mutation-observer>
-
-  <details open>
-    <summary>Source code</summary>
-
-<pre><code class="language-html">&lt;button id="addButton"&gt;Add element&lt;/button&gt;
-&lt;button id="removeButton"&gt;Remove element&lt;/button&gt;
-
-&lt;mutation-observer child-list&gt;
-  &lt;div id="elementsContainer"&gt;&lt;/div&gt;
-&lt;/mutation-observer&gt;
-
-&lt;script&gt;
-  const mutationObserverEl = document.querySlector('mutation-observer');
-  const addButton = document.getElementById('addButton');
-  const removeButton = document.getElementById('removeButton');
-  const elementsContainer = document.getElementById('elementsContainer');
-  let count = 0;
-
-  addButton.addEventListener('click', () => {
-    const el = document.createElement('div');
-    el.textContent = ++count;
-    elementsContainer.appendChild(el);
-  });
-
-  removeButton.addEventListener('click', () => {
-    const lastElement = elementsContainer.querySelector('div :last-child');
-
-    if (lastElement) {
-      count -= 1;
-      lastElement.remove();
-    }
-  });
-
-  mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
-    console.log('mutation-observer:mutate ->', evt.detail);
-  });
-&lt;/script&gt;</code></pre>
-  </details>
-
-  <!-- Example 3 -->
-  <h3 id="example-char-data"><a href="#example-char-data">#</a> Example 3</h3>
-  <p>Observing changes to the character data contained within the node</p>
-
-  <mutation-observer char-data char-data-old-value>
-    <div contenteditable="true" tabindex="0" spellcheck="false">Type into this content editable element to watch for mutations.</div>
-  </mutation-observer>
-
-  <details open>
-    <summary>Source code</summary>
-
-<pre><code class="language-html">&lt;mutation-observer char-data char-data-old-value&gt;
-  &lt;div contenteditable="true"&gt;
-    Type into this content editable element to watch for mutations.
+  &lt;div class="task"&gt;
+    &lt;label&gt;
+      &lt;input type="checkbox" id="taskCheckbox"&gt;
+      Review pull request
+    &lt;/label&gt;
+    &lt;span id="taskStatus"&gt;Pending&lt;/span&gt;
   &lt;/div&gt;
 &lt;/mutation-observer&gt;
 
 &lt;script&gt;
-  const mutationObserverEl = document.querySlector('mutation-observer');
+  const mutationObserverEl = document.querySelector('mutation-observer');
+  const checkbox = document.getElementById('taskCheckbox');
+  const taskItem = mutationObserverEl.querySelector('.task');
+  const taskStatus = document.getElementById('taskStatus');
 
-  mutationObserverEl.addEventListener('mutation-observer:mutate', evt => {
-    console.log('mutation-observer:mutate ->', evt.detail);
+  checkbox.addEventListener('change', () => {
+    taskItem.classList.toggle('completed', checkbox.checked);
+    taskStatus.textContent = checkbox.checked ? 'Completed' : 'Pending';
+  });
+
+  mutationObserverEl.addEventListener('mutation-observer-change', evt => {
+    console.log('mutation-observer-change', evt.detail.mutations);
   });
 &lt;/script&gt;</code></pre>
-  </details>
+    </details>
+  </div>
+
+  <!-- Example 2 -->
+  <h3 id="example-child-list">Child node changes</h3>
+
+  <p>
+    Add or remove tasks from the list to observe changes to its child nodes.
+  </p>
+
+  <div class="card">
+    <browser-window url="https://github.com/georapbox/mutation-observer-element" icon>
+      <button type="button" id="addButton">Add task</button>
+      <button type="button" id="removeButton">Remove last task</button>
+
+      <mutation-observer id="mutationObserver2" child-list>
+        <ul id="taskList">
+          <li>Review pull request</li>
+          <li>Update documentation</li>
+        </ul>
+      </mutation-observer>
+
+      <div class="mutation-result">
+        <strong>Last mutation</strong>
+        <output id="mutationOutput2" aria-live="polite">
+          No mutations observed yet.
+        </output>
+      </div>
+    </browser-window>
+
+    <details>
+      <summary>Code sample</summary>
+
+<pre><code class="language-html">&lt;button type="button" id="addButton"&gt;Add task&lt;/button&gt;
+&lt;button type="button" id="removeButton"&gt;Remove last task&lt;/button&gt;
+
+&lt;mutation-observer child-list&gt;
+  &lt;ul id="taskList"&gt;
+    &lt;li&gt;Review pull request&lt;/li&gt;
+    &lt;li&gt;Update documentation&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/mutation-observer&gt;
+
+&lt;script&gt;
+  const mutationObserverEl = document.querySelector('mutation-observer');
+  const addButton = document.getElementById('addButton');
+  const removeButton = document.getElementById('removeButton');
+  const taskList = document.getElementById('taskList');
+  let count = taskList.children.length;
+
+  addButton.addEventListener('click', () => {
+    const task = document.createElement('li');
+    task.textContent = `Task ${++count}`;
+    taskList.appendChild(task);
+  });
+
+  removeButton.addEventListener('click', () => {
+    const lastTask = taskList.lastElementChild;
+
+    if (lastTask) {
+      lastTask.remove();
+    }
+  });
+
+  mutationObserverEl.addEventListener('mutation-observer-change', evt => {
+    console.log('mutation-observer-change', evt.detail.mutations);
+  });
+&lt;/script&gt;</code></pre>
+    </details>
+  </div>
+
+  <!-- Example 3 -->
+  <h3 id="example-char-data">Character data changes</h3>
+
+  <p>
+    Edit the task name to observe changes to its text content, including
+    the previous value.
+  </p>
+
+  <div class="card">
+    <browser-window url="https://github.com/georapbox/mutation-observer-element" icon>
+      <label for="taskNameInput">Task name:</label>
+      <input type="text" id="taskNameInput" value="Review pull request">
+
+      <mutation-observer id="mutationObserver3" char-data char-data-old-value>
+        <p>Task preview: <span id="taskLabel">Review pull request</span></p>
+      </mutation-observer>
+
+      <div class="mutation-result">
+        <strong>Last mutation</strong>
+        <output id="mutationOutput3" aria-live="polite">
+          No mutations observed yet.
+        </output>
+      </div>
+    </browser-window>
+
+    <details>
+      <summary>Code sample</summary>
+
+<pre><code class="language-html">&lt;label for="taskNameInput"&gt;Task name:&lt;/label&gt;
+&lt;input type="text" id="taskNameInput" value="Review pull request"&gt;
+
+&lt;mutation-observer char-data char-data-old-value&gt;
+  &lt;p&gt;Task preview: &lt;span id="taskLabel"&gt;Review pull request&lt;/span&gt;&lt;/p&gt;
+&lt;/mutation-observer&gt;
+
+&lt;script&gt;
+  const mutationObserverEl = document.querySelector('mutation-observer');
+  const input = document.getElementById('taskNameInput');
+  const taskLabel = document.getElementById('taskLabel');
+
+  input.addEventListener('input', () => {
+    taskLabel.firstChild.data = input.value;
+  });
+
+  mutationObserverEl.addEventListener('mutation-observer-change', evt => {
+    console.log('mutation-observer-change', evt.detail.mutations);
+  });
+&lt;/script&gt;</code></pre>
+    </details>
+  </div>
 
   <h2>License</h2>
 

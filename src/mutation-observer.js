@@ -1,13 +1,11 @@
 // @ts-check
 
-/**
- * Represents a value that may be of type T, or null.
- *
- * @template T
- * @typedef {T | null} Nullable
- */
+const styles = /* css */ `
+  :host {
+    display: contents;
+  }
+`;
 
-const styles = /* css */ `:host { display: contents; }`;
 const template = document.createElement('template');
 
 template.innerHTML = /* html */ `
@@ -16,125 +14,72 @@ template.innerHTML = /* html */ `
 `;
 
 /**
- * @summary A custom element that offers a declarative interface to the MutationObserver API.
- * @documentation https://github.com/georapbox/mutation-observer-element#readme
+ * A custom element that provides a declarative interface to the MutationObserver API.
  *
- * @tagname mutation-observer - This is the default tag name, unless overridden by the `defineCustomElement` method.
+ * @documentation https://github.com/georapbox/mutation-observer-element
  *
- * @property {string} attr - A space-separated string of attribute names to monitor (e.g., "title class href"). Use "*" to monitor all attributes.
- * @property {boolean} attrOldValue - Set to true to record the previous value of any attribute that changes when monitoring the node or nodes for attribute changes.
- * @property {boolean} childList - Set to true to monitor the target node for the addition of new child nodes or removal of existing child nodes.
- * @property {boolean} charData - Set to true to monitor the specified target node for changes to the character data contained within the node or nodes.
- * @property {boolean} charDataOldValue - Set to true to record the previous value of a node's text whenever the text changes on nodes being monitored.
- * @property {boolean} disabled - Set to true to stop monitoring for mutations.
+ * @tagname mutation-observer
+ * @extends HTMLElement
  *
- * @attribute {string} attr - Reflects the attr property.
- * @attribute {boolean} attr-old-value - Reflects the attrOldValue property.
- * @attribute {boolean} child-list - Reflects the childList property.
- * @attribute {boolean} char-data - Reflects the charData property.
- * @attribute {boolean} char-data-old-value - Reflects the charDataOldValue property.
- * @attribute {boolean} disabled - Reflects the disabled property.
+ * @slot - The nodes to observe for mutations.
  *
- * @slot - The default slot where the target node or nodes to be monitored are placed.
- *
- * @event mutation-observer:mutate - Dispatched when a mutation is observed.
- *
- * @method defineCustomElement - Static method. Defines the custom element with the given name.
+ * @event mutation-observer-change - Dispatched when the MutationObserver reports mutations.
  */
-class MutationObserverElement extends HTMLElement {
-  /** @type {boolean} */
-  #connected = false;
-
-  /** @type {Nullable<MutationObserver>} */
+export class MutationObserverElement extends HTMLElement {
+  /** @type {MutationObserver | null} */
   #mutationObserver = null;
 
   constructor() {
     super();
 
-    if (!this.shadowRoot) {
-      const shadowRoot = this.attachShadow({ mode: 'open' });
+    let shadowRoot = this.shadowRoot;
+
+    if (!shadowRoot) {
+      shadowRoot = this.attachShadow({ mode: 'open' });
       shadowRoot.appendChild(template.content.cloneNode(true));
     }
   }
 
   static get observedAttributes() {
-    return ['attr', 'attr-old-value', 'child-list', 'char-data', 'char-data-old-value', 'disabled'];
+    return ['attr', 'attr-old-value', 'char-data', 'char-data-old-value', 'child-list', 'paused'];
   }
 
   /**
    * Lifecycle method that is called when attributes are changed, added, removed, or replaced.
    *
    * @param {string} name - The name of the attribute.
-   * @param {string} oldValue - The old value of the attribute.
-   * @param {string} newValue - The new value of the attribute.
+   * @param {string | null} oldValue - The old value of the attribute.
+   * @param {string | null} newValue - The new value of the attribute.
    */
   attributeChangedCallback(name, oldValue, newValue) {
-    if (name === 'disabled' && oldValue !== newValue && this.#connected) {
-      this.disabled ? this.#stopObserver() : this.#startObserver();
+    if (!this.#mutationObserver) {
+      return;
     }
 
-    const shouldRestartObserver =
-      (name === 'attr' ||
-        name === 'attr-old-value' ||
-        name === 'char-data' ||
-        name === 'char-data-old-value' ||
-        name === 'child-list') &&
-      oldValue !== newValue &&
-      this.#connected;
+    const hasChanged = name === 'attr' ? oldValue !== newValue : (oldValue === null) !== (newValue === null);
 
-    if (shouldRestartObserver) {
-      this.#stopObserver();
+    if (!hasChanged) {
+      return;
+    }
+
+    if (name === 'paused') {
+      this.paused ? this.#stopObserver() : this.#startObserver();
+      return;
+    }
+
+    if (!this.paused) {
       this.#startObserver();
     }
   }
 
   /**
-   * Lifecycle method that is called when the element is added to the DOM.
-   */
-  connectedCallback() {
-    this.#upgradeProperty('disabled');
-    this.#upgradeProperty('attr');
-    this.#upgradeProperty('attrOldValue');
-    this.#upgradeProperty('charData');
-    this.#upgradeProperty('charDataOldValue');
-    this.#upgradeProperty('childList');
-
-    this.#connected = true;
-
-    if ('MutationObserver' in window) {
-      this.#mutationObserver = new MutationObserver(this.#handleMutation);
-
-      if (!this.disabled) {
-        this.#startObserver();
-      }
-    }
-  }
-
-  /**
-   * Lifecycle method that is called when the element is removed from the DOM.
-   */
-  disconnectedCallback() {
-    this.#connected = false;
-    this.#stopObserver();
-  }
-
-  /**
-   * @type {boolean} - Whether the element is disabled.
-   * @default false
-   * @attribute disabled - Reflects the disabled property.
-   */
-  get disabled() {
-    return this.hasAttribute('disabled');
-  }
-
-  set disabled(value) {
-    this.toggleAttribute('disabled', !!value);
-  }
-
-  /**
-   * @type {string} - A space-separated string of attribute names to monitor (e.g., "title class href"). Use "*" to monitor all attributes.
+   * Specifies a space-separated list of attribute names to observe.
+   * Use "*" to observe all attributes.
+   *
+   * @type {string}
+   * @attribute attr
+   * @reflect
    * @default ''
-   * @attribute attr - Reflects the attr property.
    */
   get attr() {
     return this.getAttribute('attr') || '';
@@ -145,9 +90,13 @@ class MutationObserverElement extends HTMLElement {
   }
 
   /**
-   * @type {boolean} - Set to true to record the previous value of any attribute that changes when monitoring the node or nodes for attribute changes.
+   * Records the previous values of observed attributes when enabled.
+   * Has no effect unless `attr` is configured.
+   *
+   * @type {boolean}
+   * @attribute attr-old-value
+   * @reflect
    * @default false
-   * @attribute attr-old-value - Reflects the attrOldValue property.
    */
   get attrOldValue() {
     return this.hasAttribute('attr-old-value');
@@ -158,9 +107,12 @@ class MutationObserverElement extends HTMLElement {
   }
 
   /**
-   * @type {boolean} - Set to true to monitor the specified target node for changes to the character data contained within the node or nodes.
+   * Observes changes to character data, such as text content, when enabled.
+   *
+   * @type {boolean}
+   * @attribute char-data
+   * @reflect
    * @default false
-   * @attribute char-data - Reflects the charData property.
    */
   get charData() {
     return this.hasAttribute('char-data');
@@ -171,101 +123,173 @@ class MutationObserverElement extends HTMLElement {
   }
 
   /**
-   * @type {boolean} - Set to true to record the previous value of a node's text whenever the text changes on nodes being monitored.
+   * Records the previous values of observed character data when enabled.
+   * Has no effect unless `char-data` is enabled.
+   *
+   * @type {boolean}
+   * @attribute char-data-old-value
+   * @reflect
    * @default false
-   * @attribute char-data-old-value - Reflects the charDataOldValue property.
    */
   get charDataOldValue() {
     return this.hasAttribute('char-data-old-value');
   }
 
   set charDataOldValue(value) {
-    if (value) {
-      this.setAttribute('char-data-old-value', '');
-    } else {
-      this.removeAttribute('char-data-old-value');
-    }
+    this.toggleAttribute('char-data-old-value', !!value);
   }
 
   /**
-   * @type {boolean} - Set to true to monitor the target node for the addition of new child nodes or removal of existing child nodes.
+   * Observes additions and removals of child nodes when enabled.
+   *
+   * @type {boolean}
+   * @attribute child-list
+   * @reflect
    * @default false
-   * @attribute child-list - Reflects the childList property.
    */
   get childList() {
     return this.hasAttribute('child-list');
   }
 
   set childList(value) {
-    if (value) {
-      this.setAttribute('child-list', '');
-    } else {
-      this.removeAttribute('child-list');
+    this.toggleAttribute('child-list', !!value);
+  }
+
+  /**
+   * Pauses observation when enabled.
+   * Removing the attribute or setting the property to false resumes observation.
+   *
+   * @type {boolean}
+   * @attribute paused
+   * @reflect
+   * @default false
+   */
+  get paused() {
+    return this.hasAttribute('paused');
+  }
+
+  set paused(value) {
+    this.toggleAttribute('paused', !!value);
+  }
+
+  /**
+   * Lifecycle method that is called when the element is added to the DOM.
+   */
+  connectedCallback() {
+    if (!this.isConnected) {
+      return;
+    }
+
+    this.#upgradeProperty('attr');
+    this.#upgradeProperty('attrOldValue');
+    this.#upgradeProperty('charData');
+    this.#upgradeProperty('charDataOldValue');
+    this.#upgradeProperty('childList');
+    this.#upgradeProperty('paused');
+
+    if (typeof MutationObserver === 'function') {
+      this.#mutationObserver = new MutationObserver(this.#handleMutation);
+
+      if (!this.paused) {
+        this.#startObserver();
+      }
     }
   }
 
   /**
-   * Starts observing the element for mutations.
+   * Lifecycle method that is called when the element is removed from the DOM.
+   */
+  disconnectedCallback() {
+    this.#stopObserver();
+    this.#mutationObserver = null;
+  }
+
+  /**
+   * Lifecycle method that is called when the element is moved to a different
+   * place in the DOM via `Element.moveBefore()`.
+   *
+   * Preserves the active MutationObserver during state-preserving moves.
+   */
+  connectedMoveCallback() {}
+
+  /**
+   * Starts mutation observation or updates the existing observation configuration.
+   * Stops observation if no observation types are enabled.
    */
   #startObserver() {
     if (!this.#mutationObserver) {
       return;
     }
 
-    const hasObservedAttributes = typeof this.attr === 'string' && this.attr.length > 0;
+    const attr = this.attr.trim();
+    const attributes = attr.length > 0;
+    const characterData = this.charData;
+    const childList = this.childList;
 
-    try {
-      this.#mutationObserver.observe(this, {
-        subtree: true,
-        attributes: hasObservedAttributes,
-        attributeOldValue: this.attrOldValue,
-        attributeFilter: hasObservedAttributes && this.attr !== '*' ? this.attr.split(' ') : void 0,
-        childList: this.childList,
-        characterData: this.charData,
-        characterDataOldValue: this.charDataOldValue
-      });
-    } catch {
-      // Suppress any errors thrown if any of the required attributes
-      // `attr`, `child-list`, `char-data` are missing.
+    if (!attributes && !characterData && !childList) {
+      this.#stopObserver();
+      return;
     }
+
+    this.#mutationObserver.observe(this, {
+      subtree: true,
+      attributes,
+      attributeOldValue: attributes && this.attrOldValue,
+      attributeFilter: attributes && attr !== '*' ? attr.split(/\s+/) : undefined,
+      childList,
+      characterData,
+      characterDataOldValue: characterData && this.charDataOldValue
+    });
   }
 
   /**
    * Stops observing the element for mutations.
    */
   #stopObserver() {
-    this.#mutationObserver && this.#mutationObserver.disconnect();
+    this.#mutationObserver?.disconnect();
   }
 
   /**
-   * Handles the mutation observer's mutation list.
+   * Dispatches a custom event with the reported mutation records.
    *
-   * @param {MutationRecord[]} mutationList - The list of mutations observed.
+   * @param {MutationRecord[]} mutations - The reported mutation records.
    */
-  #handleMutation = mutationList => {
-    this.dispatchEvent(
-      new CustomEvent('mutation-observer:mutate', {
-        bubbles: true,
-        composed: true,
-        detail: { mutationList }
-      })
-    );
+  #handleMutation = mutations => {
+    this.#emit('mutation-observer-change', { mutations });
   };
 
   /**
-   * This is to safe guard against cases where, for instance, a framework may have added the element to the page and set a
-   * value on one of its properties, but lazy loaded its definition. Without this guard, the upgraded element would miss that
-   * property and the instance property would prevent the class property setter from ever being called.
+   * Dispatches an event, using CustomEvent when detail is provided.
    *
-   * https://developers.google.com/web/fundamentals/web-components/best-practices#lazy-properties
+   * @template T
+   * @param {string} type - The event type.
+   * @param {T} [detail] - Optional event detail.
+   * @param {{ cancelable?: boolean }} [options] - Event options.
+   * @returns {boolean} Whether the event was not canceled.
+   */
+  #emit(type, detail, { cancelable = false } = {}) {
+    const options = { bubbles: true, composed: true, cancelable };
+    const event = detail === undefined ? new Event(type, options) : new CustomEvent(type, { ...options, detail });
+    return this.dispatchEvent(event);
+  }
+
+  /**
+   * Re-applies a property value that may have been set on the element
+   * instance before the custom element was defined.
    *
-   * @param { 'attr' | 'attrOldValue' | 'childList' | 'charData' | 'charDataOldValue' | 'disabled'} prop - The property name to upgrade.
+   * This handles cases where a framework sets a property on the element
+   * before its definition is loaded. Without this step, the own property
+   * on the instance would shadow the class setter and prevent it from
+   * running after upgrade.
+   *
+   * @see https://web.dev/articles/custom-elements-best-practices#make_properties_lazy
+   *
+   * @param {'attr' | 'attrOldValue' | 'charData' | 'charDataOldValue' | 'childList' | 'paused'} prop - The property name to upgrade.
    */
   #upgradeProperty(prop) {
-    /** @type {any} */
-    const instance = this;
+    const instance = /** @type {HTMLElement & Record<string, unknown>} */ (this);
 
-    if (Object.prototype.hasOwnProperty.call(instance, prop)) {
+    if (Object.hasOwn(instance, prop)) {
       const value = instance[prop];
       delete instance[prop];
       instance[prop] = value;
@@ -273,19 +297,21 @@ class MutationObserverElement extends HTMLElement {
   }
 
   /**
-   * Defines a custom element with the given name.
-   * The name must contain a dash (-).
+   * Registers the custom element in the specified registry, unless already defined.
    *
-   * @param {string} [elementName='mutation-observer'] - The name of the custom element.
-   * @example
-   *
-   * MutationObserverElement.defineCustomElement('my-mutation-observer');
+   * @param {{ prefix?: string, registry?: CustomElementRegistry }} [options] - Registration options.
    */
-  static defineCustomElement(elementName = 'mutation-observer') {
-    if (typeof window !== 'undefined' && !window.customElements.get(elementName)) {
-      window.customElements.define(elementName, MutationObserverElement);
+  static define(options = {}) {
+    const { prefix = '', registry = globalThis.customElements } = options;
+
+    if (!registry) {
+      return;
+    }
+
+    const tagName = prefix ? `${prefix}-mutation-observer` : 'mutation-observer';
+
+    if (!registry.get(tagName)) {
+      registry.define(tagName, this);
     }
   }
 }
-
-export { MutationObserverElement };
